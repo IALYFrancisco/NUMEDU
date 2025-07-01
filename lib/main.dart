@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
-import 'presentation/screens/home_screen.dart';
+import 'screens/home.dart';
 
 void main() {
-  runApp(NumeduApp());
+  runApp(const MyApp());
 }
 
-class NumeduApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Numedu',
+      title: "Numedu",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Roboto',
-        primarySwatch: Colors.blue,
+        fontFamily: "Roboto",
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
+        useMaterial3: true,
       ),
-      home: HomeScreen(),
+      home: const HomePage(),
     );
   }
 }
