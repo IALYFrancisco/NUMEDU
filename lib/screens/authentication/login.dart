@@ -28,7 +28,7 @@ class LoginPage extends StatelessWidget {
                     child: Container(
                       width: double.infinity,
                       height: double.infinity,
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withOpacity(0.8),
                     ),
                   ),
                 ),
