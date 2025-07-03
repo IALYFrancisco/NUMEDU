@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.6
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
 
@@ -51,6 +52,12 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+
+flutter_icons:
+  android: true
+  ios: false
+  image_path: "assets/images/logo-de-numedu.png"
+
 flutter:
 
   # The following line ensures that the Material Icons font is
