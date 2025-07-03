@@ -1,12 +1,15 @@
-import "package:flutter/material.dart";
 import 'dart:ui';
+import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
-    const LoginPage({ Key? key }) : super(key:key);
+void main() => runApp(const MyApp());
 
-    @override
-    Widget build(BuildContext context){
-        return Scaffold(
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
         backgroundColor: Colors.grey[900],
         body: Center(
           child: SizedBox(
@@ -46,6 +49,7 @@ class LoginPage extends StatelessWidget {
             ),
           ),
         ),
-      );
-    }
+      ),
+    );
+  }
 }
