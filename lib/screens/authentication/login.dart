@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'dart:ui';
 
 class LoginPage extends StatelessWidget {
     const LoginPage({ Key? key }) : super(key:key);
@@ -6,75 +7,164 @@ class LoginPage extends StatelessWidget {
     @override
     Widget build(BuildContext context){
         return Scaffold(
-            body: Container(
-                padding: const EdgeInsets.all(70),
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage("assets/images/bg.jpg"),
-                        fit: BoxFit.cover
-                    )
+        backgroundColor: Colors.grey[900],
+        body: Center(
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(
+              children: [
+                ClipRRect(
+                  child: Image.asset(
+                    'assets/images/bg.jpg',
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
                 ),
-                child: Center(
-                    child: SingleChildScrollView(
-                        padding: EdgeInsets.all(24),
-                        child: Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            elevation: 10,
-                            child: Padding(
-                                padding: EdgeInsets.all(20),
-                                child: Form(
-                                    child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                            Text(
-                                                "hello!",
-                                                style: TextStyle(
-                                                    fontSize: 26,
-                                                    fontWeight: FontWeight.bold
-                                                )
-                                            ),
-                                            SizedBox(height: 20),
-                                            TextFormField(
-                                                decoration: InputDecoration(
-                                                    labelText: "Username"
-                                                )
-                                            ),
-                                            SizedBox(height: 10),
-                                            Row(
-                                                children: [
-                                                    Checkbox(value: true, onChanged: (v){}),
-                                                    Expanded(child: Text("I agree to the termes and conditions.")) 
-                                                ]
-                                            ),
-                                            SizedBox(height: 10),
-                                            ElevatedButton(
-                                                onPressed: () {},
-                                                style: ElevatedButton.styleFrom(
-                                                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 16),
-                                                    shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(30) ),
-                                                    backgroundColor: Colors.blueAccent
-                                                ),
-                                                child: Text("Sign up"),
-                                            ),
-                                            SizedBox(height: 20),
-                                            Text("Log in with your social media account."),
-                                            SizedBox(height: 10),
-                                            Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                    IconButton( onPressed: (){}, icon: Icon(Icons.facebook), color: Colors.blue ),
-                                                    IconButton( onPressed: (){}, icon: Icon(Icons.g_mobiledata), color: Colors.blue ),
-                                                    IconButton( onPressed: (){}, icon: Icon(Icons.apple), color: Colors.black )
-                                                ]
-                                            )
-                                        ]
-                                    )
+                ClipRRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 2, sigmaY: 5),
+                    child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.black.withOpacity(0.2),
+                    ),
+                  ),
+                ),
+                Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                            Image.asset(
+                                'assets/images/logo-de-numedu.png',
+                                width: 80
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                                "Connexion",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold
                                 )
+                            ),
+                            SizedBox(height: 50),
+                            Column(
+                                children: [
+                                    Container(
+                                        padding: EdgeInsets.all(16.0),
+                                        width: 275,
+                                        child: Column(
+                                            children: [
+                                                Row(
+                                                    children: [ 
+                                                        Text(
+                                                            "Votre email :",
+                                                            style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontSize: 15
+                                                            )
+                                                        ),
+                                                    ]
+                                                ),
+                                                SizedBox(height: 5),
+                                                TextField(
+                                                    decoration: InputDecoration(
+                                                        hintText: "ex: johndoe@example.com",
+                                                        isDense: true,
+                                                        filled: true,
+                                                        fillColor: Colors.white,
+                                                        contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
+                                                        border: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            ),
+                                                            enabledBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            borderSide: BorderSide(color: Colors.grey),
+                                                            ),
+                                                            focusedBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            borderSide: BorderSide(color: const Color(0xFF23468E), width: 2),
+                                                            ),
+                                                    ),
+                                                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                                                ),
+                                                SizedBox(height: 25),
+                                                Row(
+                                                    children: [ 
+                                                        Text(
+                                                            "Votre mot de passe :",
+                                                            style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontSize: 15
+                                                            )
+                                                        ),
+                                                    ]
+                                                ),
+                                                TextField(
+                                                    decoration: InputDecoration(
+                                                        hintText: ".......",
+                                                        isDense: true,
+                                                        filled: true,
+                                                        fillColor: Colors.white,
+                                                        contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
+                                                        border: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            ),
+                                                            enabledBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            borderSide: BorderSide(color: Colors.grey),
+                                                            ),
+                                                            focusedBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            borderSide: BorderSide(color: const Color(0xFF23468E), width: 2),
+                                                            ),
+                                                    ),
+                                                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                                                ),
+                                                SizedBox(height: 25),
+                                                Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                        ElevatedButton(
+                                                            onPressed: () {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(builder: (context) => const LoginPage()),
+                                                            );
+                                                            },
+                                                            style: ElevatedButton.styleFrom(
+                                                            shape: const StadiumBorder(),
+                                                            backgroundColor: const Color(0xFF23468E),
+                                                            foregroundColor: Colors.white,
+                                                            ),
+                                                            child: const Text(
+                                                            "Connexion",
+                                                            style: TextStyle(color: Colors.white),
+                                                            ),
+                                                        ),
+                                                        Text(
+                                                            "Haven't an account ?",
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: Colors.white
+                                                            )
+                                                        )
+                                                    ]
+                                                )
+                                            ]
+                                        )
+                                    )
+                                ]
                             )
-                        )
+                        ]
                     )
                 )
-            )
-        );
+              ],
+            ),
+          ),
+        ),
+      );
     }
 }
