@@ -135,16 +135,9 @@ class RegisterPage extends StatelessWidget {
                                                             foregroundColor: Colors.white,
                                                             ),
                                                             child: const Text(
-                                                            "Connexion",
+                                                            "S'inscrire",
                                                             style: TextStyle(color: Colors.white),
                                                             ),
-                                                        ),
-                                                        Text(
-                                                            "Haven't an account ?",
-                                                            style: TextStyle(
-                                                                fontSize: 12,
-                                                                color: Colors.white
-                                                            )
                                                         )
                                                     ]
                                                 )
