@@ -1,9 +1,8 @@
 import "package:flutter/material.dart";
-import "register.dart";
 import 'dart:ui';
 
-class LoginPage extends StatelessWidget {
-    const LoginPage({ Key? key }) : super(key:key);
+class RegisterPage extends StatelessWidget {
+    const RegisterPage({ Key? key }) : super(key:key);
 
     @override
     Widget build(BuildContext context){
@@ -43,7 +42,7 @@ class LoginPage extends StatelessWidget {
                             ),
                             SizedBox(height: 20),
                             Text(
-                                "Connexion",
+                                "Inscription",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,
@@ -58,6 +57,40 @@ class LoginPage extends StatelessWidget {
                                         width: 275,
                                         child: Column(
                                             children: [
+                                                Row(
+                                                    children: [ 
+                                                        Text(
+                                                            "Votre nom :",
+                                                            style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontSize: 15
+                                                            )
+                                                        ),
+                                                    ]
+                                                ),
+                                                SizedBox(height: 5),
+                                                TextField(
+                                                    decoration: InputDecoration(
+                                                        hintText: "ex: John Doe",
+                                                        isDense: true,
+                                                        filled: true,
+                                                        fillColor: Colors.white,
+                                                        contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
+                                                        border: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            ),
+                                                            enabledBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            borderSide: BorderSide(color: Colors.grey),
+                                                            ),
+                                                            focusedBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            borderSide: BorderSide(color: const Color(0xFF23468E), width: 2),
+                                                            ),
+                                                    ),
+                                                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                                                ),
+                                                SizedBox(height: 25),
                                                 Row(
                                                     children: [ 
                                                         Text(
@@ -103,6 +136,7 @@ class LoginPage extends StatelessWidget {
                                                         ),
                                                     ]
                                                 ),
+                                                SizedBox(height: 5),
                                                 TextField(
                                                     decoration: InputDecoration(
                                                         hintText: ".......",
@@ -136,25 +170,10 @@ class LoginPage extends StatelessWidget {
                                                             foregroundColor: Colors.white,
                                                             ),
                                                             child: const Text(
-                                                            "Connexion",
+                                                            "S'inscrire",
                                                             style: TextStyle(color: Colors.white),
                                                             ),
-                                                        ),
-                                                        GestureDetector(
-                                                            onTap: (){
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute( builder: (context) => const RegisterPage() )
-                                                                );
-                                                            },
-                                                            child: Text(
-                                                                    "Haven't an account ?",
-                                                                    style: TextStyle(
-                                                                        fontSize: 12,
-                                                                        color: Colors.white
-                                                                    )
-                                                                )
-                                                        ),
+                                                        )
                                                     ]
                                                 )
                                             ]
