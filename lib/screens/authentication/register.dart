@@ -60,6 +60,40 @@ class RegisterPage extends StatelessWidget {
                                                 Row(
                                                     children: [ 
                                                         Text(
+                                                            "Votre nom :",
+                                                            style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontSize: 15
+                                                            )
+                                                        ),
+                                                    ]
+                                                ),
+                                                SizedBox(height: 5),
+                                                TextField(
+                                                    decoration: InputDecoration(
+                                                        hintText: "ex: John Doe",
+                                                        isDense: true,
+                                                        filled: true,
+                                                        fillColor: Colors.white,
+                                                        contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
+                                                        border: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            ),
+                                                            enabledBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            borderSide: BorderSide(color: Colors.grey),
+                                                            ),
+                                                            focusedBorder: OutlineInputBorder(
+                                                            borderRadius: BorderRadius.circular(50.0),
+                                                            borderSide: BorderSide(color: const Color(0xFF23468E), width: 2),
+                                                            ),
+                                                    ),
+                                                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                                                ),
+                                                SizedBox(height: 25),
+                                                Row(
+                                                    children: [ 
+                                                        Text(
                                                             "Votre email :",
                                                             style: TextStyle(
                                                                 color: Colors.white,
@@ -102,6 +136,7 @@ class RegisterPage extends StatelessWidget {
                                                         ),
                                                     ]
                                                 ),
+                                                SizedBox(height: 5),
                                                 TextField(
                                                     decoration: InputDecoration(
                                                         hintText: ".......",
