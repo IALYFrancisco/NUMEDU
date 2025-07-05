@@ -128,12 +128,7 @@ class LoginPage extends StatelessWidget {
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
                                                         ElevatedButton(
-                                                            onPressed: () {
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(builder: (context) => const LoginPage()),
-                                                            );
-                                                            },
+                                                            onPressed: () {},
                                                             style: ElevatedButton.styleFrom(
                                                             shape: const StadiumBorder(),
                                                             backgroundColor: const Color(0xFF23468E),
