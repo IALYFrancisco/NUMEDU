@@ -42,7 +42,7 @@ class RegisterPage extends StatelessWidget {
                             ),
                             SizedBox(height: 20),
                             Text(
-                                "Connexion",
+                                "Inscription",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,
