@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "register.dart";
 import 'dart:ui';
 
 class LoginPage extends StatelessWidget {
@@ -139,13 +140,21 @@ class LoginPage extends StatelessWidget {
                                                             style: TextStyle(color: Colors.white),
                                                             ),
                                                         ),
-                                                        Text(
-                                                            "Haven't an account ?",
-                                                            style: TextStyle(
-                                                                fontSize: 12,
-                                                                color: Colors.white
-                                                            )
-                                                        )
+                                                        GestureDetector(
+                                                            onTap: (){
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute( builder: (context) => const RegisterPage() )
+                                                                );
+                                                            },
+                                                            child: Text(
+                                                                    "Haven't an account ?",
+                                                                    style: TextStyle(
+                                                                        fontSize: 12,
+                                                                        color: Colors.white
+                                                                    )
+                                                                )
+                                                        ),
                                                     ]
                                                 )
                                             ]
