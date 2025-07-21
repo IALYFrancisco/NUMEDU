@@ -51,7 +51,20 @@ class _DashboardPageState extends State<DashboardPage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Formations", style: TextStyle(fontSize: 16, color: Colors.black)),
+            Row(
+              children: [
+                Image.asset(
+                  'assets/images/logo-de-numedu.png', // Chemin vers ton logo
+                  width: 24,
+                  height: 24,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  "Formations",
+                  style: TextStyle(fontSize: 16, color: Colors.black),
+                ),
+              ],
+            ),
             Row(
               children: [
                 Icon(Icons.notifications_none, color: Colors.black),
@@ -60,11 +73,12 @@ class _DashboardPageState extends State<DashboardPage> {
                   backgroundColor: Colors.grey[300],
                   child: Icon(Icons.person, color: Colors.black),
                   radius: 16,
-                )
+                ),
               ],
-            )
+            ),
           ],
         ),
+
       ),
       body: Column(
         children: [
@@ -73,13 +87,30 @@ class _DashboardPageState extends State<DashboardPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 18.0),
                 hintText: "Rechercher une formation...",
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                prefixIcon: Icon(Icons.search, size: 20),
+                filled: true,
+                fillColor: Colors.white, // Fond blanc pour contraste
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                  borderSide: BorderSide(
+                    color: Colors.grey.withOpacity(0.4), // 👈 gris transparent
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                  borderSide: BorderSide(
+                    color: Color(0xFF23468E), // légèrement plus foncé au focus
+                    width: 1,
+                  ),
                 ),
               ),
+              style: TextStyle(fontSize: 14),
             ),
+
           ),
           Expanded(
             child: ListView.builder(
