@@ -133,7 +133,7 @@ class LoginPage extends StatelessWidget {
                                                             onPressed: () {
                                                                 Navigator.push(
                                                                     context,
-                                                                    MaterialPageRoute(builder: (context) => const Dashboard())
+                                                                    MaterialPageRoute(builder: (context) => const DashboardPage())
                                                                 );
                                                             },
                                                             style: ElevatedButton.styleFrom(
