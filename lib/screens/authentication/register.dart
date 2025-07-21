@@ -1,193 +1,259 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class RegisterPage extends StatelessWidget {
-    const RegisterPage({ Key? key }) : super(key:key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({ Key? key }) : super(key:key);
 
-    @override
-    Widget build(BuildContext context){
-        return Scaffold(
-        backgroundColor: Colors.grey[900],
-        body: Center(
-          child: SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            child: Stack(
-              children: [
-                ClipRRect(
-                  child: Image.asset(
-                    'assets/images/bg.jpg',
-                    fit: BoxFit.cover,
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  Future<void> _register() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      // Inscription réussie, tu peux faire autre chose ici
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Inscription réussie! Bienvenue ${_nameController.text}')),
+      );
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = e.message;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = "Une erreur est survenue.";
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      backgroundColor: Colors.grey[900],
+      body: Center(
+        child: SizedBox(
+          width: double.infinity,
+          height: double.infinity,
+          child: Stack(
+            children: [
+              ClipRRect(
+                child: Image.asset(
+                  'assets/images/bg.jpg',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              ),
+              ClipRRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 2, sigmaY: 5),
+                  child: Container(
                     width: double.infinity,
                     height: double.infinity,
+                    color: Colors.black.withOpacity(0.8),
                   ),
                 ),
-                ClipRRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 2, sigmaY: 5),
-                    child: Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      color: Colors.black.withOpacity(0.8),
+              ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/logo-de-numedu.png',
+                      width: 80,
                     ),
-                  ),
-                ),
-                Center(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    SizedBox(height: 20),
+                    Text(
+                      "Inscription",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 50),
+                    Container(
+                      padding: EdgeInsets.all(16.0),
+                      width: 275,
+                      child: Column(
                         children: [
-                            Image.asset(
-                                'assets/images/logo-de-numedu.png',
-                                width: 80
-                            ),
-                            SizedBox(height: 20),
-                            Text(
-                                "Inscription",
+                          // Nom
+                          Row(
+                            children: [ 
+                              Text(
+                                "Votre nom :",
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold
-                                )
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5),
+                          TextField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              hintText: "ex: John Doe",
+                              isDense: true,
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                                borderSide: BorderSide(color: const Color(0xFF23468E), width: 2),
+                              ),
                             ),
-                            SizedBox(height: 50),
-                            Column(
-                                children: [
-                                    Container(
-                                        padding: EdgeInsets.all(16.0),
-                                        width: 275,
-                                        child: Column(
-                                            children: [
-                                                Row(
-                                                    children: [ 
-                                                        Text(
-                                                            "Votre nom :",
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: 15
-                                                            )
-                                                        ),
-                                                    ]
-                                                ),
-                                                SizedBox(height: 5),
-                                                TextField(
-                                                    decoration: InputDecoration(
-                                                        hintText: "ex: John Doe",
-                                                        isDense: true,
-                                                        filled: true,
-                                                        fillColor: Colors.white,
-                                                        contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
-                                                        border: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(50.0),
-                                                            ),
-                                                            enabledBorder: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(50.0),
-                                                            borderSide: BorderSide(color: Colors.grey),
-                                                            ),
-                                                            focusedBorder: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(50.0),
-                                                            borderSide: BorderSide(color: const Color(0xFF23468E), width: 2),
-                                                            ),
-                                                    ),
-                                                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                                                ),
-                                                SizedBox(height: 25),
-                                                Row(
-                                                    children: [ 
-                                                        Text(
-                                                            "Votre email :",
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: 15
-                                                            )
-                                                        ),
-                                                    ]
-                                                ),
-                                                SizedBox(height: 5),
-                                                TextField(
-                                                    decoration: InputDecoration(
-                                                        hintText: "ex: johndoe@example.com",
-                                                        isDense: true,
-                                                        filled: true,
-                                                        fillColor: Colors.white,
-                                                        contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
-                                                        border: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(50.0),
-                                                            ),
-                                                            enabledBorder: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(50.0),
-                                                            borderSide: BorderSide(color: Colors.grey),
-                                                            ),
-                                                            focusedBorder: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(50.0),
-                                                            borderSide: BorderSide(color: const Color(0xFF23468E), width: 2),
-                                                            ),
-                                                    ),
-                                                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                                                ),
-                                                SizedBox(height: 25),
-                                                Row(
-                                                    children: [ 
-                                                        Text(
-                                                            "Votre mot de passe :",
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: 15
-                                                            )
-                                                        ),
-                                                    ]
-                                                ),
-                                                SizedBox(height: 5),
-                                                TextField(
-                                                    decoration: InputDecoration(
-                                                        hintText: ".......",
-                                                        isDense: true,
-                                                        filled: true,
-                                                        fillColor: Colors.white,
-                                                        contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
-                                                        border: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(50.0),
-                                                            ),
-                                                            enabledBorder: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(50.0),
-                                                            borderSide: BorderSide(color: Colors.grey),
-                                                            ),
-                                                            focusedBorder: OutlineInputBorder(
-                                                            borderRadius: BorderRadius.circular(50.0),
-                                                            borderSide: BorderSide(color: const Color(0xFF23468E), width: 2),
-                                                            ),
-                                                    ),
-                                                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                                                ),
-                                                SizedBox(height: 25),
-                                                Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                        ElevatedButton(
-                                                            onPressed: () {},
-                                                            style: ElevatedButton.styleFrom(
-                                                            shape: const StadiumBorder(),
-                                                            backgroundColor: const Color(0xFF23468E),
-                                                            foregroundColor: Colors.white,
-                                                            ),
-                                                            child: const Text(
-                                                            "S'inscrire",
-                                                            style: TextStyle(color: Colors.white),
-                                                            ),
-                                                        )
-                                                    ]
-                                                )
-                                            ]
-                                        )
+                            style: TextStyle(fontSize: 14, color: Colors.grey[800]),
+                          ),
+                          SizedBox(height: 25),
+
+                          // Email
+                          Row(
+                            children: [ 
+                              Text(
+                                "Votre email :",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5),
+                          TextField(
+                            controller: _emailController,
+                            decoration: InputDecoration(
+                              hintText: "ex: johndoe@example.com",
+                              isDense: true,
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                                borderSide: BorderSide(color: const Color(0xFF23468E), width: 2),
+                              ),
+                            ),
+                            style: TextStyle(fontSize: 14, color: Colors.grey[800]),
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          SizedBox(height: 25),
+
+                          // Mot de passe
+                          Row(
+                            children: [ 
+                              Text(
+                                "Votre mot de passe :",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5),
+                          TextField(
+                            controller: _passwordController,
+                            decoration: InputDecoration(
+                              hintText: ".......",
+                              isDense: true,
+                              filled: true,
+                              fillColor: Colors.white,
+                              contentPadding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 18.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                                borderSide: BorderSide(color: const Color(0xFF23468E), width: 2),
+                              ),
+                            ),
+                            style: TextStyle(fontSize: 14, color: Colors.grey[800]),
+                            obscureText: true,
+                          ),
+                          SizedBox(height: 25),
+
+                          if (_errorMessage != null) 
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Text(
+                                _errorMessage!,
+                                style: TextStyle(color: Colors.redAccent, fontSize: 14),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: _isLoading ? null : _register,
+                                style: ElevatedButton.styleFrom(
+                                  shape: const StadiumBorder(),
+                                  backgroundColor: const Color(0xFF23468E),
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: _isLoading 
+                                  ? SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                                     )
-                                ]
-                            )
-                        ]
-                    )
-                )
-              ],
-            ),
+                                  : const Text(
+                                      "S'inscrire",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-      );
-    }
+      ),
+    );
+  }
 }

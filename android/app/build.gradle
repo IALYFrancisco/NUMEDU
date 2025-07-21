@@ -56,3 +56,9 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    implementation 'com.google.firebase:firebase-auth:22.3.0'
+}
+
+apply plugin: 'com.google.gms.google-services'
