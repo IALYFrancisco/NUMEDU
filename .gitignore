@@ -44,3 +44,6 @@ app.*.map.json
 
 # Firebase configuration file
 android/app/google-services.json
+
+# Environment file variables
+.env
