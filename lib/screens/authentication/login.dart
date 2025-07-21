@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "register.dart";
 import 'dart:ui';
+import '../dashboard.dart';
 
 class LoginPage extends StatelessWidget {
     const LoginPage({ Key? key }) : super(key:key);
@@ -129,7 +130,12 @@ class LoginPage extends StatelessWidget {
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
                                                         ElevatedButton(
-                                                            onPressed: () {},
+                                                            onPressed: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(builder: (context) => const Dashboard())
+                                                                );
+                                                            },
                                                             style: ElevatedButton.styleFrom(
                                                             shape: const StadiumBorder(),
                                                             backgroundColor: const Color(0xFF23468E),
