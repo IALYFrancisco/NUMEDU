@@ -8,7 +8,7 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
+class _DashboardPageState extends State<DashboardPage> with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
 
   final List<String> _formations = [
@@ -29,50 +29,42 @@ class _DashboardPageState extends State<DashboardPage> {
     "Comprenez comment installer, mettre à jour et gérer les applications mobiles essentielles sur votre smartphone pour améliorer votre expérience numérique.",
   ];
 
+  final List<double> _progressions = [0.8, 0.35, 0.5, 0.95, 0.12, 1.0];
 
-  // Liste des progressions correspondantes en valeur entre 0 et 1
-  final List<double> _progressions = [
-    0.8,  // 80%
-    0.35, // 35%
-    0.5,  // 50%
-    0.95, // 95%
-    0.12, // 12%
-    1.0,  // 100%
-  ];
-
-  List<String> _filtered = [];
-  List<String> _filteredDescriptions = [];
-  List<double> _filteredProgress = [];
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _filtered = List.from(_formations);
-    _filteredDescriptions = List.from(_descriptions);
-    _filteredProgress = List.from(_progressions);
-    _searchController.addListener(_filterList);
+    _searchController.addListener(() => setState(() {}));
+    _tabController = TabController(length: 4, vsync: this);
   }
 
-  void _filterList() {
+  List<int> _getFilteredIndices(int tabIndex) {
     final query = _searchController.text.toLowerCase();
-    setState(() {
-      _filtered = [];
-      _filteredDescriptions = [];
-      _filteredProgress = [];
+    return List.generate(_formations.length, (i) {
+      final matchesSearch = _formations[i].toLowerCase().contains(query);
+      final progress = _progressions[i];
 
-      for (int i = 0; i < _formations.length; i++) {
-        if (_formations[i].toLowerCase().contains(query)) {
-          _filtered.add(_formations[i]);
-          _filteredDescriptions.add(_descriptions[i]);
-          _filteredProgress.add(_progressions[i]);
-        }
+      switch (tabIndex) {
+        case 0: // En cours
+          return matchesSearch && progress > 0 && progress < 1 ? i : -1;
+        case 1: // Terminées
+          return matchesSearch && progress == 1.0 ? i : -1;
+        case 2: // Toutes engagées
+          return matchesSearch ? i : -1;
+        case 3: // Autres
+          return matchesSearch ? i : -1; // à adapter avec liste réelle hors engagement
+        default:
+          return -1;
       }
-    });
+    }).where((i) => i != -1).toList();
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -144,65 +136,89 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
               style: TextStyle(fontSize: 14),
             ),
+          ),Padding(
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: TabBar(
+              controller: _tabController,
+              labelColor: Color(0xFF23468E),        // Bleu foncé personnalisé
+              unselectedLabelColor: Colors.grey,
+              labelStyle: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600),
+              unselectedLabelStyle: TextStyle(fontSize: 12.0),
+              indicatorColor: Color(0xFF23468E),    // Bleu foncé pour l'indicateur
+              tabs: [
+                Tab(text: 'En cours'),
+                Tab(text: 'Terminées'),
+                Tab(text: 'Engagées'),
+                Tab(text: 'Autres'),
+              ],
+            ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: _filtered.length,
-              itemBuilder: (context, index) {
-                final progress = _filteredProgress[index];
-                final percent = (progress * 100).toInt();
+            child: TabBarView(
+              controller: _tabController,
+              children: List.generate(4, (tabIndex) {
+                final filteredIndices = _getFilteredIndices(tabIndex);
 
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  padding: EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
+                return ListView.builder(
+                  itemCount: filteredIndices.length,
+                  itemBuilder: (context, listIndex) {
+                    final index = filteredIndices[listIndex];
+                    final progress = _progressions[index];
+                    final percent = (progress * 100).toInt();
+
+                    return Container(
+                      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      CircularPercentIndicator(
-                        radius: 30.0,
-                        lineWidth: 3.0,
-                        percent: progress,
-                        center: Text(
-                          "$percent%",
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                        progressColor: Color(0xFF23468E),
-                        backgroundColor: Colors.grey[300]!,
-                        circularStrokeCap: CircularStrokeCap.round,
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _filtered[index],
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                      child: Row(
+                        children: [
+                          CircularPercentIndicator(
+                            radius: 30.0,
+                            lineWidth: 3.0,
+                            percent: progress,
+                            center: Text(
+                              "$percent%",
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(height: 4),
-                            Text(
-                              _filteredDescriptions[index],
-                              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                            progressColor: Color(0xFF23468E),
+                            backgroundColor: Colors.grey[300]!,
+                            circularStrokeCap: CircularStrokeCap.round,
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _formations[index],
+                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  _descriptions[index],
+                                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 );
-              },
+              }),
             ),
           ),
         ],
