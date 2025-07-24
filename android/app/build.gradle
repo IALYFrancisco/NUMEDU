@@ -23,6 +23,12 @@ if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
 android {
     namespace = "com.lumini.numedu"
     compileSdk = flutter.compileSdkVersion
@@ -59,6 +65,7 @@ flutter {
 
 dependencies {
     implementation 'com.google.firebase:firebase-auth:22.3.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 apply plugin: 'com.google.gms.google-services'
