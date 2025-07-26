@@ -101,7 +101,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                   radius: 16,
                   backgroundImage: FirebaseAuth.instance.currentUser?.photoURL != null
                       ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
-                      : AssetImage('assets/images/default-vatar.jpg') as ImageProvider,
+                      : AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
                 ),
               ],
             ),
