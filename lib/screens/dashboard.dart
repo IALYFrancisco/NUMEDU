@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';  // <- Import Firestore
 import 'authentication/login.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -35,11 +36,38 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   late TabController _tabController;
 
+  String? userName; // <-- Stocke le nom récupéré depuis Firestore
+
   @override
   void initState() {
     super.initState();
     _searchController.addListener(() => setState(() {}));
     _tabController = TabController(length: 4, vsync: this);
+
+    _loadUserNameFromFirestore();
+  }
+
+  Future<void> _loadUserNameFromFirestore() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid != null) {
+      try {
+        final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+        if (doc.exists) {
+          setState(() {
+            userName = doc.data()?['name'] ?? 'Utilisateur';
+          });
+        } else {
+          setState(() {
+            userName = 'Utilisateur';
+          });
+        }
+      } catch (e) {
+        setState(() {
+          userName = 'Utilisateur';
+        });
+        print('Erreur récupération nom utilisateur Firestore : $e');
+      }
+    }
   }
 
   List<int> _getFilteredIndices(int tabIndex) {
@@ -100,7 +128,6 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
               children: [
                 const Icon(Icons.notifications_none, color: Colors.black),
                 const SizedBox(width: 10),
-                // Ici on remplace PopupMenuButton par GestureDetector + showMenu pour supprimer effet hover
                 GestureDetector(
                   onTapDown: (details) async {
                     final selected = await showMenu<int>(
@@ -132,7 +159,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      user?.displayName ?? 'Utilisateur',
+                                      userName ?? 'Utilisateur',  // <-- Utilise userName de Firestore
                                       style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                     Text(
