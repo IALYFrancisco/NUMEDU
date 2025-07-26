@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';  // <- Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'authentication/login.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -36,7 +36,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   late TabController _tabController;
 
-  String? userName; // <-- Stocke le nom récupéré depuis Firestore
+  String? userName;
 
   @override
   void initState() {
@@ -159,7 +159,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      userName ?? 'Utilisateur',  // <-- Utilise userName de Firestore
+                                      userName ?? 'Utilisateur',
                                       style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                     Text(
@@ -174,16 +174,26 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                           ),
                         ),
                         const PopupMenuDivider(),
-                        PopupMenuItem(
+                        PopupMenuItem<int>(
                           value: 1,
-                          child: Row(
-                            children: const [
-                              Icon(Icons.logout, color: Colors.red),
-                              SizedBox(width: 8),
-                              Text('Déconnexion', style: TextStyle(color: Colors.red)),
-                            ],
+                          padding: EdgeInsets.zero, // Supprimer les paddings externes
+                          child: Container(
+                            height: 15, // Diminue la hauteur totale
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              children: const [
+                                Icon(Icons.logout, color: Colors.green, size: 16), // Taille de l'icône réduite
+                                SizedBox(width: 8),
+                                Text(
+                                  'Déconnexion',
+                                  style: TextStyle(color: Colors.red, fontSize: 13), // Texte plus petit
+                                ),
+                              ],
+                            ),
                           ),
                         ),
+
                       ],
                     );
 
