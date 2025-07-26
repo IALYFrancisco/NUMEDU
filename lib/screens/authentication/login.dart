@@ -154,7 +154,7 @@ class LoginPage extends StatelessWidget {
                                                                 );
                                                             },
                                                             child: Text(
-                                                                    "Haven't an account ?",
+                                                                    "Pas de compte ?",
                                                                     style: TextStyle(
                                                                         fontSize: 12,
                                                                         color: Colors.white
