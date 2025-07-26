@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'authentication/login.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -97,11 +98,70 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
               children: [
                 Icon(Icons.notifications_none, color: Colors.black),
                 SizedBox(width: 10),
-                CircleAvatar(
-                  radius: 16,
-                  backgroundImage: FirebaseAuth.instance.currentUser?.photoURL != null
-                      ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
-                      : AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
+                PopupMenuButton<int>(
+                  offset: Offset(0, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  tooltip: 'Profil',
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      enabled: false,
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundImage: FirebaseAuth.instance.currentUser?.photoURL != null
+                                ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
+                                : AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  FirebaseAuth.instance.currentUser?.displayName ?? 'Utilisateur',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  FirebaseAuth.instance.currentUser?.email ?? '',
+                                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuDivider(),
+                    PopupMenuItem(
+                      value: 1,
+                      child: Row(
+                        children: [
+                          Icon(Icons.logout, color: Colors.red),
+                          SizedBox(width: 8),
+                          Text('Déconnexion', style: TextStyle(color: Colors.red)),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onSelected: (value) {
+                    if (value == 1) {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
+                    }
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey[300],
+                    radius: 16,
+                    backgroundImage: FirebaseAuth.instance.currentUser?.photoURL != null
+                        ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
+                        : AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
+                  ),
                 ),
               ],
             ),
@@ -138,15 +198,16 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
               ),
               style: TextStyle(fontSize: 14),
             ),
-          ),Padding(
+          ),
+          Padding(
             padding: const EdgeInsets.only(bottom: 12.0),
             child: TabBar(
               controller: _tabController,
-              labelColor: Color(0xFF23468E),        // Bleu foncé personnalisé
+              labelColor: Color(0xFF23468E),
               unselectedLabelColor: Colors.grey,
               labelStyle: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600),
               unselectedLabelStyle: TextStyle(fontSize: 12.0),
-              indicatorColor: Color(0xFF23468E),    // Bleu foncé pour l'indicateur
+              indicatorColor: Color(0xFF23468E),
               tabs: [
                 Tab(text: 'En cours'),
                 Tab(text: 'Terminées'),
