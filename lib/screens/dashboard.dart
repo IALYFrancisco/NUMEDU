@@ -4,6 +4,35 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'authentication/login.dart';
 
+class CustomPopupMenuItem extends PopupMenuEntry<int> {
+  final Widget child;
+  final int value;
+
+  const CustomPopupMenuItem({required this.child, required this.value});
+
+  @override
+  double get height => kMinInteractiveDimension - 15; // Réduit la hauteur minimale
+
+  @override
+  bool represents(int? value) => this.value == value;
+
+  @override
+  State createState() => _CustomPopupMenuItemState();
+}
+
+class _CustomPopupMenuItemState extends State<CustomPopupMenuItem> {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => Navigator.pop(context, widget.value),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        child: widget.child,
+      ),
+    );
+  }
+}
+
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
 
@@ -174,23 +203,14 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                           ),
                         ),
                         const PopupMenuDivider(),
-                        PopupMenuItem<int>(
+                        CustomPopupMenuItem(
                           value: 1,
-                          padding: EdgeInsets.zero, // Supprimer les paddings externes
-                          child: Container(
-                            height: 15, // Diminue la hauteur totale
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            alignment: Alignment.centerLeft,
-                            child: Row(
-                              children: const [
-                                Icon(Icons.logout, color: Colors.green, size: 16), // Taille de l'icône réduite
-                                SizedBox(width: 8),
-                                Text(
-                                  'Déconnexion',
-                                  style: TextStyle(color: Colors.red, fontSize: 13), // Texte plus petit
-                                ),
-                              ],
-                            ),
+                          child: Row(
+                            children: const [
+                              Icon(Icons.logout, color: Colors.red, size: 16),
+                              SizedBox(width: 6),
+                              Text('Déconnexion', style: TextStyle(color: Colors.red, fontSize: 13)),
+                            ],
                           ),
                         ),
 
