@@ -49,14 +49,14 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
       final progress = _progressions[i];
 
       switch (tabIndex) {
-        case 0: // En cours
+        case 0:
           return matchesSearch && progress > 0 && progress < 1 ? i : -1;
-        case 1: // Terminées
+        case 1:
           return matchesSearch && progress == 1.0 ? i : -1;
-        case 2: // Toutes engagées
+        case 2:
           return matchesSearch ? i : -1;
-        case 3: // Autres
-          return matchesSearch ? i : -1; // à adapter avec liste réelle hors engagement
+        case 3:
+          return matchesSearch ? i : -1;
         default:
           return -1;
       }
@@ -72,6 +72,8 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -87,8 +89,8 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                   width: 24,
                   height: 24,
                 ),
-                SizedBox(width: 8),
-                Text(
+                const SizedBox(width: 8),
+                const Text(
                   "Formations",
                   style: TextStyle(fontSize: 16, color: Colors.black),
                 ),
@@ -96,75 +98,99 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
             ),
             Row(
               children: [
-                Icon(Icons.notifications_none, color: Colors.black),
-                SizedBox(width: 10),
-                PopupMenuButton<int>(
-                  offset: Offset(0, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  tooltip: 'Profil',
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      enabled: false,
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundImage: FirebaseAuth.instance.currentUser?.photoURL != null
-                                ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
-                                : AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  FirebaseAuth.instance.currentUser?.displayName ?? 'Utilisateur',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  FirebaseAuth.instance.currentUser?.email ?? '',
-                                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                const Icon(Icons.notifications_none, color: Colors.black),
+                const SizedBox(width: 10),
+                // Ici on remplace PopupMenuButton par GestureDetector + showMenu pour supprimer effet hover
+                GestureDetector(
+                  onTapDown: (details) async {
+                    final selected = await showMenu<int>(
+                      context: context,
+                      position: RelativeRect.fromLTRB(
+                        details.globalPosition.dx,
+                        details.globalPosition.dy,
+                        details.globalPosition.dx,
+                        details.globalPosition.dy,
                       ),
-                    ),
-                    PopupMenuDivider(),
-                    PopupMenuItem(
-                      value: 1,
-                      child: Row(
-                        children: [
-                          Icon(Icons.logout, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Déconnexion', style: TextStyle(color: Colors.red)),
-                        ],
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
-                  ],
-                  onSelected: (value) {
-                    if (value == 1) {
-                      FirebaseAuth.instance.signOut();
+                      items: [
+                        PopupMenuItem(
+                          enabled: false,
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundImage: user?.photoURL != null
+                                    ? NetworkImage(user!.photoURL!)
+                                    : const AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      user?.displayName ?? 'Utilisateur',
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      user?.email ?? '',
+                                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuDivider(),
+                        PopupMenuItem(
+                          value: 1,
+                          child: Row(
+                            children: const [
+                              Icon(Icons.logout, color: Colors.red),
+                              SizedBox(width: 8),
+                              Text('Déconnexion', style: TextStyle(color: Colors.red)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+
+                    if (selected == 1) {
+                      await FirebaseAuth.instance.signOut();
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(builder: (context) => const LoginPage()),
                       );
                     }
                   },
                   child: CircleAvatar(
                     backgroundColor: Colors.grey[300],
                     radius: 16,
-                    backgroundImage: FirebaseAuth.instance.currentUser?.photoURL != null
-                        ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
-                        : AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
+                    backgroundImage: user?.photoURL != null
+                        ? NetworkImage(user!.photoURL!)
+                        : const AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
                   ),
                 ),
               ],
             ),
+          ],
+        ),
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: const Color(0xFF23468E),
+          unselectedLabelColor: Colors.grey,
+          labelStyle: const TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600),
+          unselectedLabelStyle: const TextStyle(fontSize: 12.0),
+          indicatorColor: const Color(0xFF23468E),
+          tabs: const [
+            Tab(text: 'En cours'),
+            Tab(text: 'Terminées'),
+            Tab(text: 'Engagées'),
+            Tab(text: 'Autres'),
           ],
         ),
       ),
@@ -176,9 +202,9 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
               controller: _searchController,
               decoration: InputDecoration(
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 18.0),
+                contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 18.0),
                 hintText: "Rechercher une formation...",
-                prefixIcon: Icon(Icons.search, size: 20),
+                prefixIcon: const Icon(Icons.search, size: 20),
                 filled: true,
                 fillColor: Colors.white,
                 enabledBorder: OutlineInputBorder(
@@ -190,30 +216,13 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50.0),
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     color: Color(0xFF23468E),
                     width: 1,
                   ),
                 ),
               ),
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
-            child: TabBar(
-              controller: _tabController,
-              labelColor: Color(0xFF23468E),
-              unselectedLabelColor: Colors.grey,
-              labelStyle: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600),
-              unselectedLabelStyle: TextStyle(fontSize: 12.0),
-              indicatorColor: Color(0xFF23468E),
-              tabs: [
-                Tab(text: 'En cours'),
-                Tab(text: 'Terminées'),
-                Tab(text: 'Engagées'),
-                Tab(text: 'Autres'),
-              ],
+              style: const TextStyle(fontSize: 14),
             ),
           ),
           Expanded(
@@ -230,12 +239,12 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                     final percent = (progress * 100).toInt();
 
                     return Container(
-                      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      padding: EdgeInsets.all(14),
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         color: Colors.grey[100],
                         borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                             color: Colors.black12,
                             blurRadius: 4,
@@ -251,22 +260,22 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                             percent: progress,
                             center: Text(
                               "$percent%",
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                             ),
-                            progressColor: Color(0xFF23468E),
-                            backgroundColor: Colors.grey[300]!,
+                            progressColor: const Color(0xFF23468E),
+                            backgroundColor: Colors.grey,
                             circularStrokeCap: CircularStrokeCap.round,
                           ),
-                          SizedBox(width: 16),
+                          const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   _formations[index],
-                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                                 Text(
                                   _descriptions[index],
                                   style: TextStyle(fontSize: 11, color: Colors.grey[600]),
