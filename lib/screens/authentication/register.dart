@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'login.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({ Key? key }) : super(key:key);
@@ -28,9 +29,15 @@ class _RegisterPageState extends State<RegisterPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      // Inscription réussie, tu peux faire autre chose ici
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Inscription réussie! Bienvenue ${_nameController.text}')),
+        SnackBar(content: Text('Inscription réussie! Veuillez vous connecter.')),
+      );
+
+      await Future.delayed(Duration(seconds: 2));
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => LoginPage()),
       );
     } on FirebaseAuthException catch (e) {
       setState(() {
