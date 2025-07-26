@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'login.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({ Key? key }) : super(key:key);
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -30,15 +31,21 @@ class _RegisterPageState extends State<RegisterPage> {
         password: _passwordController.text.trim(),
       );
 
+      // Enregistrement du nom dans Firestore
+      await FirebaseFirestore.instance.collection('users').doc(credential.user!.uid).set({
+        'uid': credential.user!.uid,
+        'name': _nameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'profileUrl': '', // Vide au départ
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Inscription réussie! Veuillez vous connecter.')),
       );
 
       await Future.delayed(Duration(seconds: 2));
-
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => LoginPage()),
-      );
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
     } on FirebaseAuthException catch (e) {
       setState(() {
         _errorMessage = e.message;
