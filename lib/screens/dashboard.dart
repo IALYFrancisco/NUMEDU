@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -97,9 +98,10 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                 Icon(Icons.notifications_none, color: Colors.black),
                 SizedBox(width: 10),
                 CircleAvatar(
-                  backgroundColor: Colors.grey[300],
-                  child: Icon(Icons.person, color: Colors.black),
                   radius: 16,
+                  backgroundImage: FirebaseAuth.instance.currentUser?.photoURL != null
+                      ? NetworkImage(FirebaseAuth.instance.currentUser!.photoURL!)
+                      : AssetImage('assets/images/default-vatar.jpg') as ImageProvider,
                 ),
               ],
             ),
