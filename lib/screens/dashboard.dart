@@ -150,7 +150,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                 const SizedBox(width: 8),
                 const Text(
                   "Formations",
-                  style: TextStyle(fontSize: 16, color: Colors.black),
+                  style: TextStyle(fontSize: 16, color: Color(0xFF23468E)),
                 ),
               ],
             ),
@@ -308,7 +308,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Color(0xFFe7e2f3),
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: const [
                           BoxShadow(
@@ -339,7 +339,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                               children: [
                                 Text(
                                   _formations[index],
-                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF23468E)),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
