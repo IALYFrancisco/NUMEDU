@@ -131,7 +131,26 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Mon profil")),
+      appBar: AppBar(
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
+        ),
+        title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+            Image.asset(
+                'assets/logo.png', // <- remplace par le chemin de ton logo
+                height: 32,
+            ),
+            const SizedBox(width: 10),
+            const Text(
+                "Mon profil",
+                style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            ],
+        ),
+    ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
