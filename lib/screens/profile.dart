@@ -83,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() => _isEditing = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Profil mis à jour')),
+      const SnackBar(content: Text('Profil mis à jour')),
     );
   }
 
@@ -93,20 +93,20 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (context) {
         String tempPassword = '';
         return AlertDialog(
-          title: Text('Changer le mot de passe'),
+          title: const Text('Changer le mot de passe'),
           content: TextField(
             obscureText: true,
-            decoration: InputDecoration(labelText: 'Nouveau mot de passe'),
+            decoration: const InputDecoration(labelText: 'Nouveau mot de passe'),
             onChanged: (value) => tempPassword = value,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Annuler'),
+              child: const Text('Annuler'),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, tempPassword),
-              child: Text('Confirmer'),
+              child: const Text('Confirmer'),
             ),
           ],
         );
@@ -117,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
       try {
         await _auth.currentUser!.updatePassword(newPassword);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Mot de passe mis à jour')),
+          const SnackBar(content: Text('Mot de passe mis à jour')),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -126,7 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } else if (newPassword != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Le mot de passe doit contenir au moins 6 caractères')),
+        const SnackBar(content: Text('Le mot de passe doit contenir au moins 6 caractères')),
       );
     }
   }
@@ -234,31 +234,16 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         const Spacer(),
 
-                        /// ✅ Remplacement ici : logo + texte deviennent un bouton d’action
-                        GestureDetector(
-                          onTap: () {
+                        /// ✅ Ici : Remplacement du logo + titre par une icône "changer image"
+                        IconButton(
+                          icon: const Icon(Icons.camera_alt, color: Colors.white),
+                          tooltip: 'Changer la photo de profil',
+                          onPressed: () {
                             setState(() {
                               _isEditing = true;
                             });
                             _pickImage();
                           },
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                'assets/images/logo-de-numedu.png',
-                                height: 32,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                "Profil",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
                         ),
                       ],
                     ),
