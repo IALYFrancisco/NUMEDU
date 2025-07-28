@@ -3,6 +3,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'authentication/login.dart';
+import 'profile.dart';
 
 class CustomPopupMenuItem extends PopupMenuEntry<int> {
   final Widget child;
@@ -174,32 +175,41 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                       items: [
                         PopupMenuItem(
                           enabled: false,
-                          child: Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundImage: user?.photoURL != null
-                                    ? NetworkImage(user!.photoURL!)
-                                    : const AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      userName ?? 'Utilisateur',
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      user?.email ?? '',
-                                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(context); // Ferme le menu
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const ProfilePage()),
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 20,
+                                  backgroundImage: user?.photoURL != null
+                                      ? NetworkImage(user!.photoURL!)
+                                      : const AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        userName ?? 'Utilisateur',
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        user?.email ?? '',
+                                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         const PopupMenuDivider(),
@@ -213,7 +223,6 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                             ],
                           ),
                         ),
-
                       ],
                     );
 
