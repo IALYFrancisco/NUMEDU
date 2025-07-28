@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home.dart';
+import 'screens/profile.dart'; // <--- Ajout
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -35,6 +36,7 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
+
   runApp(const MyApp());
 }
 
@@ -51,7 +53,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const ProfilePage(), // ← temporairement au lieu de HomePage()
     );
   }
 }
