@@ -42,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _pickImage() async {
-    if (!_isEditing) return; // Autorise uniquement en mode édition
+    if (!_isEditing) return;
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked != null) {
       setState(() => _imageFile = File(picked.path));
@@ -140,132 +140,139 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           children: [
             Stack(
-  children: [
-    GestureDetector(
-      onTap: _pickImage,
-      child: Container(
-        height: fixedHeight,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: _imageFile != null
-                ? FileImage(_imageFile!)
-                : (_profileImageUrl != null
-                    ? NetworkImage(_profileImageUrl!)
-                    : const AssetImage('assets/images/default-avatar.jpg')) as ImageProvider,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-    ),
-
-    // Nom et email en bas à gauche sur l'image
-    Positioned(
-      left: 16,
-      bottom: 16,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                _nameController.text.isEmpty ? 'Nom utilisateur' : _nameController.text,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  shadows: [Shadow(blurRadius: 4, color: Colors.black54, offset: Offset(1, 1))],
-                ),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.edit, color: Colors.white, size: 20),
-                onPressed: () {
-                  setState(() {
-                    _isEditing = true; // Passe en mode édition dès qu'on clique ici
-                  });
-                },
-              ),
-            ],
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                _emailController.text.isEmpty ? 'email@exemple.com' : _emailController.text,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 16,
-                  shadows: [Shadow(blurRadius: 4, color: Colors.black45, offset: Offset(1, 1))],
-                ),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.edit, color: Colors.white70, size: 18),
-                onPressed: () {
-                  setState(() {
-                    _isEditing = true; // Passe en mode édition dès qu'on clique ici aussi
-                  });
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-    // AppBar transparente superposée en haut avec bouton retour à gauche et logo + titre à droite
-    Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      child: Container(
-        height: kToolbarHeight + MediaQuery.of(context).padding.top,
-        padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top,
-          left: 8,
-          right: 8,
-        ),
-        color: Colors.transparent,
-        child: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.chevron_left, size: 32, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
-            ),
-            const Spacer(),
-            Row(
               children: [
-                Image.asset(
-                  'assets/images/logo-de-numedu.png',
-                  height: 32,
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: Container(
+                    height: fixedHeight,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: _imageFile != null
+                            ? FileImage(_imageFile!)
+                            : (_profileImageUrl != null
+                                ? NetworkImage(_profileImageUrl!)
+                                : const AssetImage('assets/images/default-avatar.jpg')) as ImageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 8),
-                const Text(
-                  "Profil",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white,
+
+                Positioned(
+                  left: 16,
+                  bottom: 16,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _nameController.text.isEmpty ? 'Nom utilisateur' : _nameController.text,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              shadows: [Shadow(blurRadius: 4, color: Colors.black54, offset: Offset(1, 1))],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.white, size: 20),
+                            onPressed: () {
+                              setState(() {
+                                _isEditing = true;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _emailController.text.isEmpty ? 'email@exemple.com' : _emailController.text,
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 16,
+                              shadows: [Shadow(blurRadius: 4, color: Colors.black45, offset: Offset(1, 1))],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.white70, size: 18),
+                            onPressed: () {
+                              setState(() {
+                                _isEditing = true;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: kToolbarHeight + MediaQuery.of(context).padding.top,
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).padding.top,
+                      left: 8,
+                      right: 8,
+                    ),
+                    color: Colors.transparent,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left, size: 32, color: Colors.white),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        const Spacer(),
+
+                        /// ✅ Remplacement ici : logo + texte deviennent un bouton d’action
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isEditing = true;
+                            });
+                            _pickImage();
+                          },
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                'assets/images/logo-de-numedu.png',
+                                height: 32,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                "Profil",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    ),
-  ],
-),
 
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start, // Aligner tout à gauche
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 8),
-
-                  // Champ Mot de passe désactivé
                   TextField(
                     obscureText: true,
                     enabled: false,
@@ -274,10 +281,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       hintText: "********",
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
-                  // Bouton "Changer le mot de passe" aligné à gauche
                   Align(
                     alignment: Alignment.centerLeft,
                     child: ElevatedButton(
