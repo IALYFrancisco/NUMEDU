@@ -20,6 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final _emailController = TextEditingController();
   File? _imageFile;
   String? _profileImageUrl;
+  bool _isEditing = false;
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _pickImage() async {
+    if (!_isEditing) return; // Autorise uniquement en mode édition
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked != null) {
       setState(() => _imageFile = File(picked.path));
@@ -68,7 +70,6 @@ class _ProfilePageState extends State<ProfilePage> {
       'profileImageUrl': newImageUrl,
     });
 
-    // Mise à jour de l'email dans Firebase Auth si nécessaire
     if (_emailController.text.trim() != _auth.currentUser!.email) {
       try {
         await _auth.currentUser!.updateEmail(_emailController.text.trim());
@@ -78,6 +79,8 @@ class _ProfilePageState extends State<ProfilePage> {
         );
       }
     }
+
+    setState(() => _isEditing = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Profil mis à jour')),
@@ -130,62 +133,162 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    const double fixedHeight = 275.0;
+
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-            Image.asset(
-                'assets/logo.png', // <- remplace par le chemin de ton logo
-                height: 32,
-            ),
-            const SizedBox(width: 10),
-            const Text(
-                "Mon profil",
-                style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            ],
-        ),
-    ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            GestureDetector(
-              onTap: _pickImage,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: _imageFile != null
-                    ? FileImage(_imageFile!)
-                    : (_profileImageUrl != null
-                        ? NetworkImage(_profileImageUrl!)
-                        : AssetImage('assets/default_avatar.png'))
-                            as ImageProvider,
+            Stack(
+  children: [
+    GestureDetector(
+      onTap: _pickImage,
+      child: Container(
+        height: fixedHeight,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: _imageFile != null
+                ? FileImage(_imageFile!)
+                : (_profileImageUrl != null
+                    ? NetworkImage(_profileImageUrl!)
+                    : const AssetImage('assets/images/default-avatar.jpg')) as ImageProvider,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    ),
+
+    // Nom et email en bas à gauche sur l'image
+    Positioned(
+      left: 16,
+      bottom: 16,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _nameController.text.isEmpty ? 'Nom utilisateur' : _nameController.text,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  shadows: [Shadow(blurRadius: 4, color: Colors.black54, offset: Offset(1, 1))],
+                ),
               ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.white, size: 20),
+                onPressed: () {
+                  setState(() {
+                    _isEditing = true; // Passe en mode édition dès qu'on clique ici
+                  });
+                },
+              ),
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _emailController.text.isEmpty ? 'email@exemple.com' : _emailController.text,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16,
+                  shadows: [Shadow(blurRadius: 4, color: Colors.black45, offset: Offset(1, 1))],
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.white70, size: 18),
+                onPressed: () {
+                  setState(() {
+                    _isEditing = true; // Passe en mode édition dès qu'on clique ici aussi
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+
+
+    // AppBar transparente superposée en haut avec bouton retour à gauche et logo + titre à droite
+    Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: Container(
+        height: kToolbarHeight + MediaQuery.of(context).padding.top,
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top,
+          left: 8,
+          right: 8,
+        ),
+        color: Colors.transparent,
+        child: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.chevron_left, size: 32, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
             ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: "Nom"),
+            const Spacer(),
+            Row(
+              children: [
+                Image.asset(
+                  'assets/images/logo-de-numedu.png',
+                  height: 32,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  "Profil",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 8),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: "Email"),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _saveProfile,
-              child: Text("Enregistrer"),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _changePassword,
-              child: Text("Changer le mot de passe"),
+          ],
+        ),
+      ),
+    ),
+  ],
+),
+
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start, // Aligner tout à gauche
+                children: [
+                  const SizedBox(height: 8),
+
+                  // Champ Mot de passe désactivé
+                  TextField(
+                    obscureText: true,
+                    enabled: false,
+                    decoration: const InputDecoration(
+                      labelText: "****************",
+                      hintText: "********",
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Bouton "Changer le mot de passe" aligné à gauche
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: ElevatedButton(
+                      onPressed: _changePassword,
+                      child: const Text("Changer le mot de passe"),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
