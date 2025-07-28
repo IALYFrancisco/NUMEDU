@@ -214,8 +214,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
     ),
-
-
     // AppBar transparente superposée en haut avec bouton retour à gauche et logo + titre à droite
     Positioned(
       top: 0,
