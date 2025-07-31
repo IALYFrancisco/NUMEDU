@@ -22,6 +22,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _profileImageUrl;
   bool _isEditing = false;
 
+  String? _originalEmail;
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +39,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _nameController.text = data['name'] ?? '';
       _emailController.text = data['email'] ?? '';
       _profileImageUrl = data['profileImageUrl'];
+      _originalEmail = data['email'] ?? '';
       setState(() {});
     }
   }
@@ -56,35 +59,70 @@ class _ProfilePageState extends State<ProfilePage> {
     return await ref.getDownloadURL();
   }
 
-  Future<void> _saveProfile() async {
-    final uid = _auth.currentUser!.uid;
+  Future<String?> _askForPassword() async {
+    final passwordController = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirmez votre mot de passe"),
+        content: TextField(
+          controller: passwordController,
+          obscureText: true,
+          decoration: const InputDecoration(labelText: "Mot de passe actuel"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(null),
+            child: const Text("Annuler"),
+          ),
+          TextButton(
+            onPressed: () {
+              if (passwordController.text.isEmpty) return;
+              Navigator.of(context).pop(passwordController.text);
+            },
+            child: const Text("Confirmer"),
+          ),
+        ],
+      ),
+    );
+  }
 
+  Future<void> _saveProfile() async {
+    final user = _auth.currentUser!;
     String? newImageUrl = _profileImageUrl;
+
     if (_imageFile != null) {
       newImageUrl = await _uploadImage(_imageFile!);
     }
 
-    await _firestore.collection('users').doc(uid).update({
-      'name': _nameController.text.trim(),
-      'email': _emailController.text.trim(),
-      'profileImageUrl': newImageUrl,
-    });
+    try {
+      if (_emailController.text.trim() != _originalEmail) {
+        final password = await _askForPassword();
+        if (password == null || password.isEmpty) return;
 
-    if (_emailController.text.trim() != _auth.currentUser!.email) {
-      try {
-        await _auth.currentUser!.updateEmail(_emailController.text.trim());
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erreur lors de la mise à jour de l'email : $e")),
+        final credential = EmailAuthProvider.credential(
+          email: _originalEmail!,
+          password: password,
         );
+
+        await user.reauthenticateWithCredential(credential);
+        await user.updateEmail(_emailController.text.trim());
+        _originalEmail = _emailController.text.trim();
       }
-    }
 
-    setState(() => _isEditing = false);
+      await _firestore.collection('users').doc(user.uid).update({
+        'name': _nameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'profileImageUrl': newImageUrl,
+      });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Profil mis à jour')),
-    );
+      setState(() {
+        _isEditing = false;
+        _profileImageUrl = newImageUrl;
+        _imageFile = null;
+      });
+    } catch (e) {}
   }
 
   Future<void> _changePassword() async {
@@ -116,18 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (newPassword != null && newPassword.length >= 6) {
       try {
         await _auth.currentUser!.updatePassword(newPassword);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Mot de passe mis à jour')),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erreur : ${e.toString()}")),
-        );
-      }
-    } else if (newPassword != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Le mot de passe doit contenir au moins 6 caractères')),
-      );
+      } catch (e) {}
     }
   }
 
@@ -152,7 +179,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             ? FileImage(_imageFile!)
                             : (_profileImageUrl != null
                                 ? NetworkImage(_profileImageUrl!)
-                                : const AssetImage('assets/images/default-avatar.jpg')) as ImageProvider,
+                                : const AssetImage('assets/images/default-avatar.jpg'))
+                            as ImageProvider,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -179,7 +207,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                     decoration: const InputDecoration(
                                       isDense: true,
-                                      contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 2, horizontal: 8),
                                       border: InputBorder.none,
                                     ),
                                   ),
@@ -190,7 +219,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                     color: Colors.white,
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
-                                    shadows: [Shadow(blurRadius: 4, color: Colors.black54, offset: Offset(1, 1))],
+                                    shadows: [
+                                      Shadow(
+                                          blurRadius: 4,
+                                          color: Colors.black54,
+                                          offset: Offset(1, 1))
+                                    ],
                                   ),
                                 ),
                           const SizedBox(width: 8),
@@ -207,14 +241,38 @@ class _ProfilePageState extends State<ProfilePage> {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            _emailController.text.isEmpty ? 'email@exemple.com' : _emailController.text,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 16,
-                              shadows: [Shadow(blurRadius: 4, color: Colors.black45, offset: Offset(1, 1))],
-                            ),
-                          ),
+                          _isEditing
+                              ? SizedBox(
+                                  width: 250,
+                                  child: TextField(
+                                    controller: _emailController,
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 16,
+                                    ),
+                                    decoration: const InputDecoration(
+                                      isDense: true,
+                                      contentPadding:
+                                          EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                                      border: InputBorder.none,
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  _emailController.text.isEmpty
+                                      ? 'email@exemple.com'
+                                      : _emailController.text,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 16,
+                                    shadows: [
+                                      Shadow(
+                                          blurRadius: 4,
+                                          color: Colors.black45,
+                                          offset: Offset(1, 1))
+                                    ],
+                                  ),
+                                ),
                           const SizedBox(width: 8),
                           IconButton(
                             icon: const Icon(Icons.edit, color: Colors.white70, size: 18),
@@ -264,24 +322,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 8),
-                  const Text("Email", style: TextStyle(fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _emailController,
-                    enabled: _isEditing,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Entrez votre email',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
                   const Text("Mot de passe", style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   TextField(
@@ -294,12 +339,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: ElevatedButton(
-                      onPressed: _changePassword,
-                      child: const Text("Changer le mot de passe"),
-                    ),
+                  ElevatedButton(
+                    onPressed: _changePassword,
+                    child: const Text("Changer le mot de passe"),
                   ),
                   const SizedBox(height: 24),
                   if (_isEditing)
@@ -315,7 +357,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           onPressed: () {
                             setState(() {
                               _isEditing = false;
-                              _loadUserData(); // recharge les anciennes données
+                              _loadUserData();
                             });
                           },
                           child: const Text("Annuler"),
