@@ -23,6 +23,8 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isEditing = false;
 
   String? _originalEmail;
+  String? _originalName;
+  String? _originalProfileImageUrl;
 
   @override
   void initState() {
@@ -39,7 +41,11 @@ class _ProfilePageState extends State<ProfilePage> {
       _nameController.text = data['name'] ?? '';
       _emailController.text = data['email'] ?? '';
       _profileImageUrl = data['profileImageUrl'];
+
+      _originalName = data['name'] ?? '';
       _originalEmail = data['email'] ?? '';
+      _originalProfileImageUrl = data['profileImageUrl'];
+
       setState(() {});
     }
   }
@@ -88,41 +94,84 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Future<void> _saveProfile() async {
-    final user = _auth.currentUser!;
-    String? newImageUrl = _profileImageUrl;
-
-    if (_imageFile != null) {
-      newImageUrl = await _uploadImage(_imageFile!);
+  Future<void> _updateName() async {
+    final uid = _auth.currentUser!.uid;
+    final newName = _nameController.text.trim();
+    if (newName != _originalName) {
+      await _firestore.collection('users').doc(uid).update({'name': newName});
+      setState(() {
+        _originalName = newName;
+        _isEditing = false;
+      });
     }
+  }
+
+  Future<void> _updateEmail() async {
+  final user = _auth.currentUser!;
+  final newEmail = _emailController.text.trim();
+
+  if (newEmail != _originalEmail) {
+    final password = await _askForPassword();
+    if (password == null || password.isEmpty) return;
+
+    final credential = EmailAuthProvider.credential(
+      email: _originalEmail!,
+      password: password,
+    );
 
     try {
-      if (_emailController.text.trim() != _originalEmail) {
-        final password = await _askForPassword();
-        if (password == null || password.isEmpty) return;
+      // Réauthentification obligatoire
+      await user.reauthenticateWithCredential(credential);
 
-        final credential = EmailAuthProvider.credential(
-          email: _originalEmail!,
-          password: password,
-        );
+      // Mise à jour de l'e-mail Firebase Auth
+      await user.updateEmail(newEmail);
 
-        await user.reauthenticateWithCredential(credential);
-        await user.updateEmail(_emailController.text.trim());
-        _originalEmail = _emailController.text.trim();
-      }
-
+      // Mise à jour dans Firestore (si nécessaire)
       await _firestore.collection('users').doc(user.uid).update({
-        'name': _nameController.text.trim(),
-        'email': _emailController.text.trim(),
-        'profileImageUrl': newImageUrl,
+        'email': newEmail,
       });
 
+      // Envoi d'un email de vérification à la nouvelle adresse
+      await user.sendEmailVerification();
+
+      // Mise à jour de l'état local
       setState(() {
+        _originalEmail = newEmail;
         _isEditing = false;
-        _profileImageUrl = newImageUrl;
-        _imageFile = null;
       });
-    } catch (e) {}
+
+      // Feedback à l'utilisateur
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Email mis à jour. Vérifiez votre boîte mail.')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors de la mise à jour de l\'email : ${e.toString()}')),
+      );
+    }
+  }
+}
+
+
+  Future<void> _updateProfileImage() async {
+    if (_imageFile != null) {
+      final newUrl = await _uploadImage(_imageFile!);
+      await _firestore.collection('users').doc(_auth.currentUser!.uid).update({
+        'profileImageUrl': newUrl,
+      });
+      setState(() {
+        _profileImageUrl = newUrl;
+        _originalProfileImageUrl = newUrl;
+        _imageFile = null;
+        _isEditing = false;
+      });
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    await _updateName();
+    await _updateEmail();
+    await _updateProfileImage();
   }
 
   Future<void> _changePassword() async {
@@ -154,7 +203,14 @@ class _ProfilePageState extends State<ProfilePage> {
     if (newPassword != null && newPassword.length >= 6) {
       try {
         await _auth.currentUser!.updatePassword(newPassword);
-      } catch (e) {}
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Mot de passe mis à jour avec succès.")),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur : ${e.toString()}')),
+        );
+      }
     }
   }
 
