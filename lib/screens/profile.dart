@@ -158,7 +158,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ),
-
                 Positioned(
                   left: 16,
                   bottom: 16,
@@ -168,15 +167,32 @@ class _ProfilePageState extends State<ProfilePage> {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            _nameController.text.isEmpty ? 'Nom utilisateur' : _nameController.text,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              shadows: [Shadow(blurRadius: 4, color: Colors.black54, offset: Offset(1, 1))],
-                            ),
-                          ),
+                          _isEditing
+                              ? SizedBox(
+                                  width: 200,
+                                  child: TextField(
+                                    controller: _nameController,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    decoration: const InputDecoration(
+                                      isDense: true,
+                                      contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                                      border: InputBorder.none,
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  _nameController.text.isEmpty ? 'Nom utilisateur' : _nameController.text,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    shadows: [Shadow(blurRadius: 4, color: Colors.black54, offset: Offset(1, 1))],
+                                  ),
+                                ),
                           const SizedBox(width: 8),
                           IconButton(
                             icon: const Icon(Icons.edit, color: Colors.white, size: 20),
@@ -213,7 +229,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 ),
-
                 Positioned(
                   top: 0,
                   left: 0,
@@ -233,8 +248,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           onPressed: () => Navigator.pop(context),
                         ),
                         const Spacer(),
-
-                        /// ✅ Ici : Remplacement du logo + titre par une icône "changer image"
                         IconButton(
                           icon: const Icon(Icons.camera_alt, color: Colors.white),
                           tooltip: 'Changer la photo de profil',
@@ -258,12 +271,26 @@ class _ProfilePageState extends State<ProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 8),
+                  const Text("Email", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: _emailController,
+                    enabled: _isEditing,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Entrez votre email',
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text("Mot de passe", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
                   TextField(
                     obscureText: true,
                     enabled: false,
                     decoration: const InputDecoration(
                       labelText: "****************",
                       hintText: "********",
+                      border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -274,6 +301,27 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: const Text("Changer le mot de passe"),
                     ),
                   ),
+                  const SizedBox(height: 24),
+                  if (_isEditing)
+                    Row(
+                      children: [
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.save),
+                          label: const Text("Enregistrer"),
+                          onPressed: _saveProfile,
+                        ),
+                        const SizedBox(width: 12),
+                        OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              _isEditing = false;
+                              _loadUserData(); // recharge les anciennes données
+                            });
+                          },
+                          child: const Text("Annuler"),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
