@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'screens/home.dart';
+import 'screens/authentication/login.dart';
+import 'screens/dashboard.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -32,9 +35,13 @@ void main() async {
         appId: dotenv.env['FIREBASE_APP_ID']!,
       ),
     );
+
+    // Forcer la persistance de session sur le web
+    await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
   } else {
     await Firebase.initializeApp();
   }
+
   runApp(const MyApp());
 }
 
@@ -51,7 +58,32 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const AuthGate(),
+    );
+  }
+}
+
+/// Page de redirection automatique selon l'état de connexion
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasData) {
+          return const DashboardPage(); // Ou HomePage si c’est la bonne page d’accueil
+        }
+
+        return const LoginPage();
+      },
     );
   }
 }
