@@ -19,47 +19,54 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isLoading = false;
   String? _errorMessage;
 
-  Future<void> _register() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
+Future<void> _register() async {
+  setState(() {
+    _isLoading = true;
+    _errorMessage = null;
+  });
+
+  try {
+    final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+
+    // Envoi du mail de vérification
+    await credential.user!.sendEmailVerification();
+
+    // Enregistrement du nom dans Firestore
+    await FirebaseFirestore.instance.collection('users').doc(credential.user!.uid).set({
+      'uid': credential.user!.uid,
+      'name': _nameController.text.trim(),
+      'email': _emailController.text.trim(),
+      'profileUrl': '', // Vide au départ
+      'createdAt': FieldValue.serverTimestamp(),
     });
 
-    try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text(
+        'Inscription réussie! Un email de vérification a été envoyé. Veuillez vérifier votre boîte mail avant de vous connecter.'
+      )),
+    );
 
-      // Enregistrement du nom dans Firestore
-      await FirebaseFirestore.instance.collection('users').doc(credential.user!.uid).set({
-        'uid': credential.user!.uid,
-        'name': _nameController.text.trim(),
-        'email': _emailController.text.trim(),
-        'profileUrl': '', // Vide au départ
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+    await Future.delayed(const Duration(seconds: 4));
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Inscription réussie! Veuillez vous connecter.')),
-      );
-
-      await Future.delayed(Duration(seconds: 2));
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        _errorMessage = e.message;
-      });
-    } catch (e) {
-      setState(() {
-        _errorMessage = "Une erreur est survenue.";
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    // Redirection vers la page de connexion
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
+  } on FirebaseAuthException catch (e) {
+    setState(() {
+      _errorMessage = e.message;
+    });
+  } catch (e) {
+    setState(() {
+      _errorMessage = "Une erreur est survenue.";
+    });
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
   }
+}
 
   @override
   Widget build(BuildContext context){

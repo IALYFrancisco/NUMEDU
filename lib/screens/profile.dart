@@ -106,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _updateEmail() async {
+Future<void> _updateEmail() async {
   final user = _auth.currentUser!;
   final newEmail = _emailController.text.trim();
 
@@ -114,36 +114,29 @@ class _ProfilePageState extends State<ProfilePage> {
     final password = await _askForPassword();
     if (password == null || password.isEmpty) return;
 
-    final credential = EmailAuthProvider.credential(
-      email: _originalEmail!,
-      password: password,
-    );
+    final credential = EmailAuthProvider.credential(email: _originalEmail!, password: password);
 
     try {
-      // Réauthentification obligatoire
       await user.reauthenticateWithCredential(credential);
 
-      // Mise à jour de l'e-mail Firebase Auth
-      await user.updateEmail(newEmail);
+      // Recharge l'utilisateur pour récupérer l'état vérifié
+      await user.reload();
 
-      // Mise à jour dans Firestore (si nécessaire)
-      await _firestore.collection('users').doc(user.uid).update({
-        'email': newEmail,
-      });
+      final refreshedUser = _auth.currentUser;
 
-      // Envoi d'un email de vérification à la nouvelle adresse
-      await user.sendEmailVerification();
+      if (refreshedUser != null && refreshedUser.emailVerified) {
+        await refreshedUser.updateEmail(newEmail);
+        await _firestore.collection('users').doc(user.uid).update({'email': newEmail});
 
-      // Mise à jour de l'état local
-      setState(() {
-        _originalEmail = newEmail;
-        _isEditing = false;
-      });
-
-      // Feedback à l'utilisateur
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Email mis à jour. Vérifiez votre boîte mail.')),
-      );
+        setState(() {
+          _originalEmail = newEmail;
+          _isEditing = false;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Veuillez vérifier votre email avant de changer votre email.')),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur lors de la mise à jour de l\'email : ${e.toString()}')),
