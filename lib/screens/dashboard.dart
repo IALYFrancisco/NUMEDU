@@ -310,10 +310,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => FormationDetailsPage(
-                              title: _formations[index],
-                              description: _descriptions[index],
-                            ),
+                            builder: (_) => const FormationDetailsPage(),
                           ),
                         );
                       },
@@ -353,9 +350,10 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                                   Text(
                                     _formations[index],
                                     style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color(0xFF23468E)),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF23468E),
+                                    ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
@@ -369,42 +367,6 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                      child: Row(
-                        children: [
-                          CircularPercentIndicator(
-                            radius: 30.0,
-                            lineWidth: 3.0,
-                            percent: progress,
-                            center: Text(
-                              "$percent%",
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                            progressColor: const Color(0xFF23468E),
-                            backgroundColor: Colors.grey,
-                            circularStrokeCap: CircularStrokeCap.round,
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _formations[index],
-                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF23468E)),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _descriptions[index],
-                                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
                       ),
                     );
                   },
