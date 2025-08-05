@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'authentication/login.dart';
 import 'profile.dart';
+import 'detailsformation.dart';
 
 class CustomPopupMenuItem extends PopupMenuEntry<int> {
   final Widget child;
@@ -304,54 +305,68 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                     final progress = _progressions[index];
                     final percent = (progress * 100).toInt();
 
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Color(0xFFe7e2f3),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const FormationDetailsPage(),
                           ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          CircularPercentIndicator(
-                            radius: 30.0,
-                            lineWidth: 3.0,
-                            percent: progress,
-                            center: Text(
-                              "$percent%",
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFe7e2f3),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(0, 2),
                             ),
-                            progressColor: const Color(0xFF23468E),
-                            backgroundColor: Colors.grey,
-                            circularStrokeCap: CircularStrokeCap.round,
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _formations[index],
-                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF23468E)),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _descriptions[index],
-                                  style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            CircularPercentIndicator(
+                              radius: 30.0,
+                              lineWidth: 3.0,
+                              percent: progress,
+                              center: Text(
+                                "$percent%",
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              progressColor: const Color(0xFF23468E),
+                              backgroundColor: Colors.grey,
+                              circularStrokeCap: CircularStrokeCap.round,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    _formations[index],
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF23468E),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    _descriptions[index],
+                                    style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
