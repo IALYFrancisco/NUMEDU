@@ -78,6 +78,7 @@ flutter:
     - assets/images/bg.jpg
     - assets/images/logo-de-numedu.png
     - assets/images/default-avatar.jpg
+    - assets/images/jirama.jpeg
     - .env
   #   - images/a_dot_ham.jpeg
 

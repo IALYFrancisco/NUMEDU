@@ -8,25 +8,29 @@ class FormationDetailsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       extendBodyBehindAppBar: true, // Le contenu passe sous l'AppBar
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(12.0), // réduit la marge autour
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFF23468E),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.all(2), // réduit la surface intérieure
-              child: const Icon(Icons.chevron_left, size: 25, color: Colors.white),
+        appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: SafeArea(
+            child: Padding(
+            padding: const EdgeInsets.only(left: 16.0, top: 20.0),
+            child: Align(
+                alignment: Alignment.topLeft,
+                child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                    width: 34,
+                    height: 34,
+                    decoration: const BoxDecoration(
+                    color: Color(0xFF23468E),
+                    shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.chevron_left, size: 25, color: Colors.white),
+                ),
+                ),
             ),
-          ),
+            ),
         ),
-      ),
+    ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -34,7 +38,7 @@ class FormationDetailsPage extends StatelessWidget {
           children: [
             const SizedBox(height: kToolbarHeight + 20), // Espace sous AppBar
             const Image(
-              image: AssetImage('assets/images/bg.jpg'),
+              image: AssetImage('assets/images/jirama.jpeg'),
               height: 200,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -42,28 +46,40 @@ class FormationDetailsPage extends StatelessWidget {
             const SizedBox(height: 20),
             const Text(
               "Paiement en ligne des factures JIRAMA",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF23468E)),
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF23468E),
+              ),
             ),
             const SizedBox(height: 12),
-            // Ici on enlève const car couleur dynamique
-            Text(
+            const Text(
               "Cette formation vous permet de découvrir les bases du numérique. "
               "Elle inclut des vidéos, des exercices et des quiz pour vous aider à progresser à votre rythme.",
-              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              style: TextStyle(
+                fontSize: 14,
+                color: Color(0xFF707070), // gris un peu foncé
+              ),
             ),
             const SizedBox(height: 20),
             const Text(
               "Contenu de la formation :",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF23468E)),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF23468E),
+              ),
             ),
             const SizedBox(height: 10),
-            // Ici aussi on enlève const
-            Text(
+            const Text(
               "- Introduction\n"
               "- Leçon 1 : Présentation\n"
               "- Leçon 2 : Pratique\n"
               "- Quiz final",
-              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+              style: TextStyle(
+                fontSize: 14,
+                color: Color(0xFF707070),
+              ),
             ),
             const SizedBox(height: 30),
             Align(
