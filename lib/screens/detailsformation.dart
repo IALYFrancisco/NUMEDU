@@ -1,46 +1,50 @@
 import 'package:flutter/material.dart';
 
 class FormationDetailsPage extends StatelessWidget {
-  final String title;
-  final String description;
-  final String imagePath;
-
-  const FormationDetailsPage({
-    super.key,
-    required this.title,
-    required this.description,
-    required this.imagePath,
-  });
+  const FormationDetailsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
-        backgroundColor: const Color(0xFF23468E),
+        title: const Text('Détail Formation'),
+        backgroundColor: Color(0xFF23468E),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          children: [
-            Image.asset(imagePath, fit: BoxFit.cover),
-            const SizedBox(height: 16),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Image(
+              image: AssetImage('assets/images/bg.jpg'),
+              height: 200,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            SizedBox(height: 20),
             Text(
-              title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+              "Titre de la formation",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 12),
+            Text(
+              "Cette formation vous permet de découvrir les bases du numérique. "
+              "Elle inclut des vidéos, des exercices et des quiz pour vous aider à progresser à votre rythme.",
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 20),
+            Text(
+              "Contenu de la formation :",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Text("- Introduction\n- Leçon 1 : Présentation\n- Leçon 2 : Pratique\n- Quiz final\n"),
+            SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                onPressed: null, // ou une fonction plus tard
+                child: Text("Commencer"),
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 16),
-            ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Retour"),
             )
           ],
         ),
