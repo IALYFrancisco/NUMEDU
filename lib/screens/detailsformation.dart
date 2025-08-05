@@ -37,11 +37,26 @@ class FormationDetailsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: kToolbarHeight + 20), // Espace sous AppBar
-            const Image(
-              image: AssetImage('assets/images/jirama.jpeg'),
-              height: 200,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8), // Arrondi léger
+                    boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withOpacity(0.1), // Ombre douce
+                        blurRadius: 3,
+                        offset: Offset(0, 3), // Position de l'ombre
+                    ),
+                    ],
+                ),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: const Image(
+                    image: AssetImage('assets/images/jirama.jpeg'),
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    ),
+                ),
             ),
             const SizedBox(height: 20),
             const Text(
