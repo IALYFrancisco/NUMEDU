@@ -30,16 +30,13 @@ Future<void> _register() async {
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
     );
-
-    // Envoi du mail de vérification
     await credential.user!.sendEmailVerification();
 
-    // Enregistrement du nom dans Firestore
     await FirebaseFirestore.instance.collection('users').doc(credential.user!.uid).set({
       'uid': credential.user!.uid,
       'name': _nameController.text.trim(),
       'email': _emailController.text.trim(),
-      'profileUrl': '', // Vide au départ
+      'profileUrl': '',
       'createdAt': FieldValue.serverTimestamp(),
     });
 
@@ -50,8 +47,6 @@ Future<void> _register() async {
     );
 
     await Future.delayed(const Duration(seconds: 4));
-
-    // Redirection vers la page de connexion
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginPage()));
   } on FirebaseAuthException catch (e) {
     setState(() {
@@ -119,7 +114,6 @@ Future<void> _register() async {
                       width: 275,
                       child: Column(
                         children: [
-                          // Nom
                           Row(
                             children: [ 
                               Text(
@@ -155,8 +149,6 @@ Future<void> _register() async {
                             style: TextStyle(fontSize: 14, color: Colors.grey[800]),
                           ),
                           SizedBox(height: 25),
-
-                          // Email
                           Row(
                             children: [ 
                               Text(
@@ -193,8 +185,6 @@ Future<void> _register() async {
                             keyboardType: TextInputType.emailAddress,
                           ),
                           SizedBox(height: 25),
-
-                          // Mot de passe
                           Row(
                             children: [ 
                               Text(
