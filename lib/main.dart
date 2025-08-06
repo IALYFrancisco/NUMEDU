@@ -36,7 +36,6 @@ void main() async {
       ),
     );
 
-    // Forcer la persistance de session sur le web
     await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
   } else {
     await Firebase.initializeApp();
@@ -63,7 +62,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// Page de redirection automatique selon l'état de connexion
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
@@ -79,7 +77,7 @@ class AuthGate extends StatelessWidget {
         }
 
         if (snapshot.hasData) {
-          return const DashboardPage(); // Ou HomePage si c’est la bonne page d’accueil
+          return const DashboardPage();
         }
 
         return const LoginPage();
