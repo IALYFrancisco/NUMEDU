@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:firebase_auth/firebase_auth.dart'; // Ajout
+import 'package:firebase_auth/firebase_auth.dart';
 import '../dashboard.dart';
 import 'register.dart';
 
@@ -30,7 +30,6 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text.trim(),
       );
 
-      // Connexion réussie → rediriger vers Dashboard
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const DashboardPage()),
       );
@@ -97,7 +96,6 @@ class _LoginPageState extends State<LoginPage> {
                       width: 275,
                       child: Column(
                         children: [
-                          // Email
                           const Row(children: [ 
                             Text(
                               "Votre email :",
@@ -129,7 +127,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           const SizedBox(height: 25),
 
-                          // Password
                           const Row(children: [ 
                             Text(
                               "Votre mot de passe :",
