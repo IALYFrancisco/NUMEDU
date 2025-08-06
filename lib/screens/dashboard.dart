@@ -13,7 +13,7 @@ class CustomPopupMenuItem extends PopupMenuEntry<int> {
   const CustomPopupMenuItem({required this.child, required this.value});
 
   @override
-  double get height => kMinInteractiveDimension - 15; // Réduit la hauteur minimale
+  double get height => kMinInteractiveDimension - 15;
 
   @override
   bool represents(int? value) => this.value == value;
@@ -178,7 +178,7 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                           enabled: false,
                           child: InkWell(
                             onTap: () {
-                              Navigator.pop(context); // Ferme le menu
+                              Navigator.pop(context);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => const ProfilePage()),
