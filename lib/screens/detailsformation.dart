@@ -7,7 +7,7 @@ class FormationDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      extendBodyBehindAppBar: true, // Le contenu passe sous l'AppBar
+      extendBodyBehindAppBar: true,
         appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: SafeArea(
@@ -36,15 +36,15 @@ class FormationDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: kToolbarHeight + 20), // Espace sous AppBar
+            const SizedBox(height: kToolbarHeight + 20),
             Container(
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8), // Arrondi léger
+                    borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                     BoxShadow(
-                        color: Colors.black.withOpacity(0.1), // Ombre douce
+                        color: Colors.black.withOpacity(0.1),
                         blurRadius: 3,
-                        offset: Offset(0, 3), // Position de l'ombre
+                        offset: Offset(0, 3),
                     ),
                     ],
                 ),
@@ -73,7 +73,7 @@ class FormationDetailsPage extends StatelessWidget {
               "Elle inclut des vidéos, des exercices et des quiz pour vous aider à progresser à votre rythme.",
               style: TextStyle(
                 fontSize: 14,
-                color: Color(0xFF707070), // gris un peu foncé
+                color: Color(0xFF707070),
               ),
             ),
             const SizedBox(height: 20),

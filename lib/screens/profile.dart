@@ -119,7 +119,6 @@ Future<void> _updateEmail() async {
     try {
       await user.reauthenticateWithCredential(credential);
 
-      // Recharge l'utilisateur pour récupérer l'état vérifié
       await user.reload();
 
       final refreshedUser = _auth.currentUser;
