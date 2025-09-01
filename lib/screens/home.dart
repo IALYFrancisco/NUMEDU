@@ -8,7 +8,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
         return Scaffold(
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Colors.white,
         body: Center(
           child: SizedBox(
             width: double.infinity,
