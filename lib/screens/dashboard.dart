@@ -42,7 +42,8 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> with SingleTickerProviderStateMixin {
+class _DashboardPageState extends State<DashboardPage>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
 
   final List<String> _formations = [
@@ -55,18 +56,17 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
   ];
 
   final List<String> _descriptions = [
-    "Apprenez à maîtriser les fonctionnalités de base de votre smartphone pour mieux communiquer, utiliser les applications et gérer vos contacts au quotidien.",
-    "Découvrez comment créer, configurer et gérer efficacement une adresse email, envoyer des messages, gérer votre boîte de réception et rester connecté.",
-    "Explorez les bonnes pratiques pour naviguer en toute sécurité sur Internet, rechercher des informations fiables, et utiliser les moteurs de recherche efficacement.",
-    "Un guide complet pour remplir correctement les formulaires en ligne, éviter les erreurs courantes et soumettre vos demandes aux services publics sans souci.",
-    "Apprenez à consulter et utiliser les sites gouvernementaux officiels pour accéder aux services en ligne, télécharger des documents et effectuer des démarches administratives.",
-    "Comprenez comment installer, mettre à jour et gérer les applications mobiles essentielles sur votre smartphone pour améliorer votre expérience numérique.",
+    "Apprenez à maîtriser les fonctionnalités de base de votre smartphone...",
+    "Découvrez comment créer et gérer une adresse email...",
+    "Explorez les bonnes pratiques pour naviguer en toute sécurité...",
+    "Un guide complet pour remplir correctement les formulaires en ligne...",
+    "Apprenez à consulter et utiliser les sites gouvernementaux officiels...",
+    "Comprenez comment installer et gérer les applications mobiles...",
   ];
 
   final List<double> _progressions = [0.8, 0.35, 0.5, 0.95, 0.12, 1.0];
 
   late TabController _tabController;
-
   String? userName;
 
   @override
@@ -74,7 +74,6 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
     super.initState();
     _searchController.addListener(() => setState(() {}));
     _tabController = TabController(length: 4, vsync: this);
-
     _loadUserNameFromFirestore();
   }
 
@@ -82,7 +81,8 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
       try {
-        final doc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+        final doc =
+            await FirebaseFirestore.instance.collection('users').doc(uid).get();
         if (doc.exists) {
           setState(() {
             userName = doc.data()?['name'] ?? 'Utilisateur';
@@ -114,12 +114,14 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
           return matchesSearch && progress == 1.0 ? i : -1;
         case 2:
           return matchesSearch ? i : -1;
-        case 3:
-          return matchesSearch ? i : -1;
         default:
           return -1;
       }
     }).where((i) => i != -1).toList();
+  }
+
+  Stream<QuerySnapshot> _getFirestoreFormations() {
+    return FirebaseFirestore.instance.collection('formations').snapshots();
   }
 
   @override
@@ -181,7 +183,9 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                               Navigator.pop(context);
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => const ProfilePage()),
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ProfilePage()),
                               );
                             },
                             child: Row(
@@ -190,20 +194,26 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                                   radius: 20,
                                   backgroundImage: user?.photoURL != null
                                       ? NetworkImage(user!.photoURL!)
-                                      : const AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
+                                      : const AssetImage(
+                                              'assets/images/default-avatar.jpg')
+                                          as ImageProvider,
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         userName ?? 'Utilisateur',
-                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
                                       ),
                                       Text(
                                         user?.email ?? '',
-                                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey[600]),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ],
@@ -220,7 +230,9 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                             children: const [
                               Icon(Icons.logout, color: Colors.red, size: 16),
                               SizedBox(width: 6),
-                              Text('Déconnexion', style: TextStyle(color: Colors.red, fontSize: 13)),
+                              Text('Déconnexion',
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 13)),
                             ],
                           ),
                         ),
@@ -230,7 +242,8 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                     if (selected == 1) {
                       await FirebaseAuth.instance.signOut();
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
                       );
                     }
                   },
@@ -239,7 +252,9 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
                     radius: 16,
                     backgroundImage: user?.photoURL != null
                         ? NetworkImage(user!.photoURL!)
-                        : const AssetImage('assets/images/default-avatar.jpg') as ImageProvider,
+                        : const AssetImage(
+                                'assets/images/default-avatar.jpg')
+                            as ImageProvider,
                   ),
                 ),
               ],
@@ -250,7 +265,8 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
           controller: _tabController,
           labelColor: const Color(0xFF23468E),
           unselectedLabelColor: Colors.grey,
-          labelStyle: const TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600),
+          labelStyle:
+              const TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600),
           unselectedLabelStyle: const TextStyle(fontSize: 12.0),
           indicatorColor: const Color(0xFF23468E),
           tabs: const [
@@ -269,7 +285,8 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
               controller: _searchController,
               decoration: InputDecoration(
                 isDense: true,
-                contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 18.0),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 18.0),
                 hintText: "Rechercher une formation...",
                 prefixIcon: const Icon(Icons.search, size: 20),
                 filled: true,
@@ -295,87 +312,187 @@ class _DashboardPageState extends State<DashboardPage> with SingleTickerProvider
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: List.generate(4, (tabIndex) {
-                final filteredIndices = _getFilteredIndices(tabIndex);
-
-                return ListView.builder(
-                  itemCount: filteredIndices.length,
-                  itemBuilder: (context, listIndex) {
-                    final index = filteredIndices[listIndex];
-                    final progress = _progressions[index];
-                    final percent = (progress * 100).toInt();
-
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const FormationDetailsPage(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFe7e2f3),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            CircularPercentIndicator(
-                              radius: 30.0,
-                              lineWidth: 3.0,
-                              percent: progress,
-                              center: Text(
-                                "$percent%",
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                              ),
-                              progressColor: const Color(0xFF23468E),
-                              backgroundColor: Colors.grey,
-                              circularStrokeCap: CircularStrokeCap.round,
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    _formations[index],
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF23468E),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    _descriptions[index],
-                                    style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              }),
+              children: [
+                _buildLocalList(0),
+                _buildLocalList(1),
+                _buildLocalList(2),
+                _buildFirestoreList(), // Onglet Autres
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLocalList(int tabIndex) {
+    final filteredIndices = _getFilteredIndices(tabIndex);
+
+    return ListView.builder(
+      itemCount: filteredIndices.length,
+      itemBuilder: (context, listIndex) {
+        final index = filteredIndices[listIndex];
+        final progress = _progressions[index];
+        final percent = (progress * 100).toInt();
+
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FormationDetailsPage()),
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color(0xFFe7e2f3),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                CircularPercentIndicator(
+                  radius: 30.0,
+                  lineWidth: 3.0,
+                  percent: progress,
+                  center: Text(
+                    "$percent%",
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                  progressColor: const Color(0xFF23468E),
+                  backgroundColor: Colors.grey,
+                  circularStrokeCap: CircularStrokeCap.round,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _formations[index],
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF23468E),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _descriptions[index],
+                        style:
+                            TextStyle(fontSize: 11, color: Colors.grey[600]),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFirestoreList() {
+    final query = _searchController.text.toLowerCase();
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: _getFirestoreFormations(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(child: Text("Aucune formation trouvée"));
+        }
+
+        final docs = snapshot.data!.docs.where((doc) {
+          final title = (doc['title'] ?? '').toString().toLowerCase();
+          return title.contains(query);
+        }).toList();
+
+        return ListView.builder(
+          itemCount: docs.length,
+          itemBuilder: (context, index) {
+            final data = docs[index].data() as Map<String, dynamic>;
+            final title = data['title'] ?? 'Sans titre';
+            final description = data['descriptions'] ?? '';
+
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const FormationDetailsPage()),
+                );
+              },
+              child: Container(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFe7e2f3),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.book, color: Colors.blue),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF23468E),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            description,
+                            style: TextStyle(
+                                fontSize: 11, color: Colors.grey[600]),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
