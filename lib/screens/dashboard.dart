@@ -5,7 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'authentication/login.dart';
 import 'profile.dart';
 import 'detailsformation.dart';
-import 'dashboard/autres.dart'; // Import de la nouvelle page "Autres"
+import 'dashboard/autres.dart';
+import 'dashboard/engagees.dart'; // <- Import de la page Engagées
 
 class CustomPopupMenuItem extends PopupMenuEntry<int> {
   final Widget child;
@@ -113,8 +114,6 @@ class _DashboardPageState extends State<DashboardPage>
           return matchesSearch && progress > 0 && progress < 1 ? i : -1;
         case 1:
           return matchesSearch && progress == 1.0 ? i : -1;
-        case 2:
-          return matchesSearch ? i : -1;
         default:
           return -1;
       }
@@ -316,8 +315,8 @@ class _DashboardPageState extends State<DashboardPage>
               children: [
                 _buildLocalList(0),
                 _buildLocalList(1),
-                _buildLocalList(2),
-                const AutresPage(), // Remplace _buildOtherList()
+                const EngageesPage(), // <- Tab Engagées déplacée
+                const AutresPage(),   // <- Tab Autres
               ],
             ),
           ),
