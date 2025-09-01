@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'detailsformation.dart'; // Ajuste le chemin si nécessaire
+import 'detailsformation.dart';
 
 class EngageesPage extends StatelessWidget {
   const EngageesPage({Key? key, this.searchQuery}) : super(key: key);
