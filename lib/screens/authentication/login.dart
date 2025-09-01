@@ -123,14 +123,14 @@ class _LoginPageState extends State<LoginPage> {
                                 borderSide: const BorderSide(color: Color(0xFF23468E), width: 2),
                               ),
                             ),
-                            style: const TextStyle(fontSize: 14, color: Colors.grey),
+                            style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(height: 25),
 
                           const Row(children: [ 
                             Text(
                               "Votre mot de passe :",
-                              style: TextStyle(color: Colors.white, fontSize: 15)
+                              style: TextStyle(color: Colors.white, fontSize: 14)
                             )
                           ]),
                           const SizedBox(height: 5),
@@ -152,10 +152,10 @@ class _LoginPageState extends State<LoginPage> {
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(50.0),
                                 borderSide: const BorderSide(color: Color(0xFF23468E), width: 2),
-                              ),
+                              )
                             ),
+                            style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w600),
                             obscureText: true,
-                            style: const TextStyle(fontSize: 14, color: Colors.grey),
                           ),
 
                           const SizedBox(height: 25),
