@@ -301,7 +301,7 @@ class _DashboardPageState extends State<DashboardPage>
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50.0),
                   borderSide: const BorderSide(
-                    color: Colors.white,
+                    color: const Color(0xFF23468E),
                     width: 1,
                   ),
                 ),
