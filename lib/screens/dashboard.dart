@@ -497,9 +497,15 @@ class _DashboardPageState extends State<DashboardPage>
                       right: 0,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
+                         padding: const EdgeInsets.symmetric(
+                            horizontal: 8, // largeur interne
+                            vertical: 4,   // hauteur interne
+                          ),
+                          minimumSize: Size(0, 0), // évite la taille par défaut
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           backgroundColor: const Color(0xFF23468E),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                         onPressed: () {},
