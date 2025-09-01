@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'authentication/login.dart';
 import 'profile.dart';
 import 'dashboard/detailsformation.dart';
 import 'dashboard/autres.dart';
 import 'dashboard/engagees.dart';
+import 'dashboard/encours.dart';
+import 'dashboard/terminees.dart'; // ✅ Onglet Terminées séparé
 
 class CustomPopupMenuItem extends PopupMenuEntry<int> {
   final Widget child;
@@ -66,7 +69,7 @@ class _DashboardPageState extends State<DashboardPage>
     "Comprenez comment installer et gérer les applications mobiles...",
   ];
 
-  final List<double> _progressions = [0.8, 0.35, 0.5, 0.95, 0.12, 1.0];
+  final List<double> _progressions = [0.8, 0.35, 0.5, 0.95, 1.0, 1.0];
 
   late TabController _tabController;
   String? userName;
@@ -101,23 +104,6 @@ class _DashboardPageState extends State<DashboardPage>
         print('Erreur récupération nom utilisateur Firestore : $e');
       }
     }
-  }
-
-  List<int> _getFilteredIndices(int tabIndex) {
-    final query = _searchController.text.toLowerCase();
-    return List.generate(_formations.length, (i) {
-      final matchesSearch = _formations[i].toLowerCase().contains(query);
-      final progress = _progressions[i];
-
-      switch (tabIndex) {
-        case 0:
-          return matchesSearch && progress > 0 && progress < 1 ? i : -1;
-        case 1:
-          return matchesSearch && progress == 1.0 ? i : -1;
-        default:
-          return -1;
-      }
-    }).where((i) => i != -1).toList();
   }
 
   @override
@@ -279,6 +265,7 @@ class _DashboardPageState extends State<DashboardPage>
       ),
       body: Column(
         children: [
+          // Barre de recherche
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
@@ -301,7 +288,7 @@ class _DashboardPageState extends State<DashboardPage>
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(50.0),
                   borderSide: const BorderSide(
-                    color: const Color(0xFF23468E),
+                    color: Color(0xFF23468E),
                     width: 1,
                   ),
                 ),
@@ -313,8 +300,13 @@ class _DashboardPageState extends State<DashboardPage>
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildLocalList(0),
-                _buildLocalList(1),
+                EncoursPage(
+                  formations: _formations,
+                  descriptions: _descriptions,
+                  progressions: _progressions,
+                  searchQuery: _searchController.text,
+                ),
+                TermineesPage(searchQuery: _searchController.text), // ✅ Terminées
                 const EngageesPage(),
                 const AutresPage(),
               ],
@@ -322,83 +314,6 @@ class _DashboardPageState extends State<DashboardPage>
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildLocalList(int tabIndex) {
-    final filteredIndices = _getFilteredIndices(tabIndex);
-
-    return ListView.builder(
-      itemCount: filteredIndices.length,
-      itemBuilder: (context, listIndex) {
-        final index = filteredIndices[listIndex];
-        final progress = _progressions[index];
-        final percent = (progress * 100).toInt();
-
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const FormationDetailsPage()),
-            );
-          },
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                CircularPercentIndicator(
-                  radius: 30.0,
-                  lineWidth: 3.0,
-                  percent: progress,
-                  center: Text(
-                    "$percent%",
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.bold),
-                  ),
-                  progressColor: const Color(0xFF23468E),
-                  backgroundColor: Colors.grey,
-                  circularStrokeCap: CircularStrokeCap.round,
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _formations[index],
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF23468E),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _descriptions[index],
-                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }
