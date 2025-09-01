@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'authentication/login.dart';
 import 'profile.dart';
 import 'detailsformation.dart';
+import 'dashboard/autres.dart'; // Import de la nouvelle page "Autres"
 
 class CustomPopupMenuItem extends PopupMenuEntry<int> {
   final Widget child;
@@ -120,10 +121,6 @@ class _DashboardPageState extends State<DashboardPage>
     }).where((i) => i != -1).toList();
   }
 
-  Stream<QuerySnapshot> _getFirestoreFormations() {
-    return FirebaseFirestore.instance.collection('formations').snapshots();
-  }
-
   @override
   void dispose() {
     _searchController.dispose();
@@ -156,7 +153,7 @@ class _DashboardPageState extends State<DashboardPage>
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white, // titre en blanc
+                    color: Colors.white,
                   ),
                 ),
               ],
@@ -289,8 +286,8 @@ class _DashboardPageState extends State<DashboardPage>
               controller: _searchController,
               decoration: InputDecoration(
                 isDense: true,
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 18.0),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 18.0),
                 hintText: "Rechercher une formation...",
                 prefixIcon: const Icon(Icons.search, size: 20),
                 filled: true,
@@ -320,7 +317,7 @@ class _DashboardPageState extends State<DashboardPage>
                 _buildLocalList(0),
                 _buildLocalList(1),
                 _buildLocalList(2),
-                _buildOtherList(), // <-- section Autres
+                const AutresPage(), // Remplace _buildOtherList()
               ],
             ),
           ),
@@ -401,125 +398,6 @@ class _DashboardPageState extends State<DashboardPage>
               ],
             ),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildOtherList() {
-    final query = _searchController.text.toLowerCase();
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: _getFirestoreFormations(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text("Aucune formation trouvée"));
-        }
-
-        final docs = snapshot.data!.docs.where((doc) {
-          final title = (doc['title'] ?? '').toString().toLowerCase();
-          return title.contains(query);
-        }).toList();
-
-        return ListView.builder(
-          itemCount: docs.length,
-          itemBuilder: (context, index) {
-            final data = docs[index].data() as Map<String, dynamic>;
-            final title = data['title'] ?? 'Sans titre';
-            final description = data['descriptions'] ?? '';
-
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const FormationDetailsPage()),
-                );
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEBFEFF), // fond bleu très clair
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF23468E),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.book, color: Colors.white),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                title,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF23468E),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                description,
-                                style: TextStyle(
-                                    fontSize: 11, color: Colors.grey[600]),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, // largeur interne
-                            vertical: 4,   // hauteur interne
-                          ),
-                          minimumSize: Size(0, 0), // évite la taille par défaut
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          backgroundColor: const Color(0xFF23468E),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        onPressed: () {},
-                        child: const Text(
-                          "Suivre",
-                          style: TextStyle(fontSize: 12, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
         );
       },
     );
