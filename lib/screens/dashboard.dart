@@ -5,8 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'authentication/login.dart';
 import 'profile.dart';
 import 'detailsformation.dart';
-import 'dashboard/autres.dart';
-import 'dashboard/engagees.dart'; // <- Import de la page Engagées
+import 'dashboard/autres.dart';       // AutresPage
+import 'dashboard/engagees.dart';    // EngageesPage
 
 class CustomPopupMenuItem extends PopupMenuEntry<int> {
   final Widget child;
@@ -315,8 +315,8 @@ class _DashboardPageState extends State<DashboardPage>
               children: [
                 _buildLocalList(0),
                 _buildLocalList(1),
-                const EngageesPage(), // <- Tab Engagées déplacée
-                const AutresPage(),   // <- Tab Autres
+                const EngageesPage(), // Onglet Engagées
+                const AutresPage(),   // Onglet Autres
               ],
             ),
           ),
