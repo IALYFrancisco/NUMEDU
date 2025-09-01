@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'authentication/login.dart';
 import 'profile.dart';
-import 'detailsformation.dart';
+import 'dashboard/detailsformation.dart';
 import 'dashboard/autres.dart';       // AutresPage
 import 'dashboard/engagees.dart';    // EngageesPage
 
