@@ -136,7 +136,6 @@ class _DashboardPageState extends State<DashboardPage>
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      backgroundColor: Colors.white, // Fond blanc général
       appBar: AppBar(
         backgroundColor: const Color(0xFF23468E),
         elevation: 1,
@@ -154,7 +153,11 @@ class _DashboardPageState extends State<DashboardPage>
                 const SizedBox(width: 8),
                 const Text(
                   "Formations",
-                  style: TextStyle(fontSize: 16, color: Colors.white,),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white, // titre en blanc
+                  ),
                 ),
               ],
             ),
@@ -265,9 +268,9 @@ class _DashboardPageState extends State<DashboardPage>
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white,
-          unselectedLabelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
           labelStyle:
-              const TextStyle(fontSize: 12.0),
+              const TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600),
           unselectedLabelStyle: const TextStyle(fontSize: 12.0),
           indicatorColor: Colors.white,
           tabs: const [
@@ -278,53 +281,50 @@ class _DashboardPageState extends State<DashboardPage>
           ],
         ),
       ),
-      body: Container(
-        color: Colors.white, // <-- fond blanc global du body
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 18.0),
-                  hintText: "Rechercher une formation...",
-                  prefixIcon: const Icon(Icons.search, size: 20),
-                  filled: true,
-                  fillColor: Colors.white,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50.0),
-                    borderSide: BorderSide(
-                      color: Colors.grey.withOpacity(0.4),
-                      width: 1,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50.0),
-                    borderSide: const BorderSide(
-                      color: Color(0xFF23468E),
-                      width: 1,
-                    ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                isDense: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 18.0),
+                hintText: "Rechercher une formation...",
+                prefixIcon: const Icon(Icons.search, size: 20),
+                filled: true,
+                fillColor: Colors.white,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                  borderSide: BorderSide(
+                    color: Colors.grey.withOpacity(0.4),
+                    width: 1,
                   ),
                 ),
-                style: const TextStyle(fontSize: 14),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                    width: 1,
+                  ),
+                ),
               ),
+              style: const TextStyle(fontSize: 14),
             ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildLocalList(0),
-                  _buildLocalList(1),
-                  _buildLocalList(2),
-                  _buildFirestoreList(),
-                ],
-              ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildLocalList(0),
+                _buildLocalList(1),
+                _buildLocalList(2),
+                _buildOtherList(), // <-- section Autres
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -350,7 +350,7 @@ class _DashboardPageState extends State<DashboardPage>
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFFEBFEFF),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: const [
                 BoxShadow(
@@ -391,8 +391,7 @@ class _DashboardPageState extends State<DashboardPage>
                       const SizedBox(height: 4),
                       Text(
                         _descriptions[index],
-                        style:
-                            TextStyle(fontSize: 11, color: Colors.black, fontWeight: FontWeight.w500),
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -407,7 +406,7 @@ class _DashboardPageState extends State<DashboardPage>
     );
   }
 
-  Widget _buildFirestoreList() {
+  Widget _buildOtherList() {
     final query = _searchController.text.toLowerCase();
 
     return StreamBuilder<QuerySnapshot>(
@@ -441,11 +440,10 @@ class _DashboardPageState extends State<DashboardPage>
                 );
               },
               child: Container(
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEBFEFF),
+                  color: const Color(0xFFEBFEFF), // fond bleu très clair
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: const [
                     BoxShadow(
@@ -455,39 +453,60 @@ class _DashboardPageState extends State<DashboardPage>
                     ),
                   ],
                 ),
-                child: Row(
+                child: Stack(
                   children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF23468E), // fond bleu
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.book, color: Colors.white), // icône blanche
+                    Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF23468E),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.book, color: Colors.white),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF23468E),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                description,
+                                style: TextStyle(
+                                    fontSize: 11, color: Colors.grey[600]),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF23468E),
-                            ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF23468E),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            description,
-                            style: TextStyle(
-                                fontSize: 11, color: Colors.black, fontWeight: FontWeight.w500),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                        ),
+                        onPressed: () {},
+                        child: const Text(
+                          "Suivre",
+                          style: TextStyle(fontSize: 12, color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
