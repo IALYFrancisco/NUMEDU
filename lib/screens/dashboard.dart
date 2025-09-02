@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'authentication/login.dart';
-import 'profile.dart';
-import 'dashboard/detailsformation.dart';
+import 'profile/detailsprofile.dart';
 import 'dashboard/autres.dart';
 import 'dashboard/engagees.dart';
 import 'dashboard/encours.dart';
-import 'dashboard/terminees.dart'; // ✅ Onglet Terminées séparé
+import 'dashboard/terminees.dart';
 
 class CustomPopupMenuItem extends PopupMenuEntry<int> {
   final Widget child;
@@ -50,27 +48,6 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage>
     with SingleTickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
-
-  final List<String> _formations = [
-    "Utiliser un smartphone",
-    "Créer une adresse email",
-    "Naviguer sur Internet",
-    "Remplir un formulaire en ligne",
-    "Consulter un site gouvernemental",
-    "Installer une application",
-  ];
-
-  final List<String> _descriptions = [
-    "Apprenez à maîtriser les fonctionnalités de base de votre smartphone...",
-    "Découvrez comment créer et gérer une adresse email...",
-    "Explorez les bonnes pratiques pour naviguer en toute sécurité...",
-    "Un guide complet pour remplir correctement les formulaires en ligne...",
-    "Apprenez à consulter et utiliser les sites gouvernementaux officiels...",
-    "Comprenez comment installer et gérer les applications mobiles...",
-  ];
-
-  final List<double> _progressions = [0.8, 0.35, 0.5, 0.95, 1.0, 1.0];
-
   late TabController _tabController;
   String? userName;
 
@@ -170,8 +147,12 @@ class _DashboardPageState extends State<DashboardPage>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ProfilePage()),
+                                  builder: (context) => ProfileView(
+                                    name: userName ?? 'Utilisateur',
+                                    email: user?.email ?? '',
+                                    profileImageUrl: user?.photoURL,
+                                  ),
+                                ),
                               );
                             },
                             child: Row(
@@ -256,10 +237,10 @@ class _DashboardPageState extends State<DashboardPage>
           unselectedLabelStyle: const TextStyle(fontSize: 12.0),
           indicatorColor: Colors.white,
           tabs: const [
+            Tab(text: 'Toutes'),
+            Tab(text: 'Engagées'),
             Tab(text: 'En cours'),
             Tab(text: 'Terminées'),
-            Tab(text: 'Engagées'),
-            Tab(text: 'Autres'),
           ],
         ),
       ),
@@ -300,15 +281,17 @@ class _DashboardPageState extends State<DashboardPage>
             child: TabBarView(
               controller: _tabController,
               children: [
-                EncoursPage(
-                  formations: _formations,
-                  descriptions: _descriptions,
-                  progressions: _progressions,
-                  searchQuery: _searchController.text,
-                ),
-                TermineesPage(searchQuery: _searchController.text), // ✅ Terminées
-                const EngageesPage(),
-                const AutresPage(),
+                // 1. Toutes les formations
+                AutresPage(searchQuery: _searchController.text),
+
+                // 2. Formations engagées
+                EngageesPage(searchQuery: _searchController.text),
+
+                // 3. Formations en cours (0.1 <= progress <= 0.9)
+                EncoursPage(searchQuery: _searchController.text),
+
+                // 4. Formations terminées (progress == 1.0)
+                TermineesPage(searchQuery: _searchController.text),
               ],
             ),
           ),
