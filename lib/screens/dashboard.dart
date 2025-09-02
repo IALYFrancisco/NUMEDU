@@ -50,16 +50,17 @@ class _DashboardPageState extends State<DashboardPage>
   final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
   String? userName;
+  String? profileImageUrl; // 🔑 on ajoute ici la photo depuis Firestore
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(() => setState(() {}));
     _tabController = TabController(length: 4, vsync: this);
-    _loadUserNameFromFirestore();
+    _loadUserDataFromFirestore();
   }
 
-  Future<void> _loadUserNameFromFirestore() async {
+  Future<void> _loadUserDataFromFirestore() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
       try {
@@ -68,17 +69,20 @@ class _DashboardPageState extends State<DashboardPage>
         if (doc.exists) {
           setState(() {
             userName = doc.data()?['name'] ?? 'Utilisateur';
+            profileImageUrl = doc.data()?['profile']; // 🔑 on récupère la photo
           });
         } else {
           setState(() {
             userName = 'Utilisateur';
+            profileImageUrl = null;
           });
         }
       } catch (e) {
         setState(() {
           userName = 'Utilisateur';
+          profileImageUrl = null;
         });
-        print('Erreur récupération nom utilisateur Firestore : $e');
+        print('Erreur récupération données utilisateur Firestore : $e');
       }
     }
   }
@@ -150,7 +154,7 @@ class _DashboardPageState extends State<DashboardPage>
                                   builder: (context) => ProfileView(
                                     name: userName ?? 'Utilisateur',
                                     email: user?.email ?? '',
-                                    profileImageUrl: user?.photoURL,
+                                    profileImageUrl: profileImageUrl, // 🔑
                                   ),
                                 ),
                               );
@@ -159,8 +163,8 @@ class _DashboardPageState extends State<DashboardPage>
                               children: [
                                 CircleAvatar(
                                   radius: 20,
-                                  backgroundImage: user?.photoURL != null
-                                      ? NetworkImage(user!.photoURL!)
+                                  backgroundImage: profileImageUrl != null
+                                      ? NetworkImage(profileImageUrl!)
                                       : const AssetImage(
                                               'assets/images/default-avatar.jpg')
                                           as ImageProvider,
@@ -217,10 +221,9 @@ class _DashboardPageState extends State<DashboardPage>
                   child: CircleAvatar(
                     backgroundColor: Colors.grey[300],
                     radius: 16,
-                    backgroundImage: user?.photoURL != null
-                        ? NetworkImage(user!.photoURL!)
-                        : const AssetImage(
-                                'assets/images/default-avatar.jpg')
+                    backgroundImage: profileImageUrl != null
+                        ? NetworkImage(profileImageUrl!) // 🔑 vraie image
+                        : const AssetImage('assets/images/default-avatar.jpg')
                             as ImageProvider,
                   ),
                 ),
@@ -281,16 +284,9 @@ class _DashboardPageState extends State<DashboardPage>
             child: TabBarView(
               controller: _tabController,
               children: [
-                // 1. Toutes les formations
                 AutresPage(searchQuery: _searchController.text),
-
-                // 2. Formations engagées
                 EngageesPage(searchQuery: _searchController.text),
-
-                // 3. Formations en cours (0.1 <= progress <= 0.9)
                 EncoursPage(searchQuery: _searchController.text),
-
-                // 4. Formations terminées (progress == 1.0)
                 TermineesPage(searchQuery: _searchController.text),
               ],
             ),
