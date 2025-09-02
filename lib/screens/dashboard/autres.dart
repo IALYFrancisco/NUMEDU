@@ -4,7 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'detailsformation.dart';
 
 class AutresPage extends StatelessWidget {
-  const AutresPage({Key? key}) : super(key: key);
+  final String searchQuery;
+
+  const AutresPage({Key? key, required this.searchQuery}) : super(key: key);
 
   Stream<QuerySnapshot> _getFirestoreFormations() {
     return FirebaseFirestore.instance.collection('formations').snapshots();
@@ -13,6 +15,7 @@ class AutresPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userId = FirebaseAuth.instance.currentUser?.uid;
+
     return StreamBuilder<QuerySnapshot>(
       stream: _getFirestoreFormations(),
       builder: (context, snapshot) {
@@ -25,11 +28,22 @@ class AutresPage extends StatelessWidget {
 
         final docs = snapshot.data!.docs;
 
+        // 🔎 Filtrage par titre avec searchQuery
+        final filteredDocs = docs.where((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          final title = (data['title'] ?? '').toString().toLowerCase();
+          return title.contains(searchQuery.toLowerCase());
+        }).toList();
+
+        if (filteredDocs.isEmpty) {
+          return const Center(child: Text("Aucune formation correspondante"));
+        }
+
         return ListView.builder(
-          itemCount: docs.length,
+          itemCount: filteredDocs.length,
           itemBuilder: (context, index) {
-            final data = docs[index].data() as Map<String, dynamic>;
-            final formationId = docs[index].id;
+            final data = filteredDocs[index].data() as Map<String, dynamic>;
+            final formationId = filteredDocs[index].id;
             final title = data['title'] ?? 'Sans titre';
             final description = data['descriptions'] ?? '';
 
@@ -47,7 +61,7 @@ class AutresPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => const FormationDetailsPage()),
+                          builder: (_) => FormationDetailsPage(formationID: docs[index].id)),
                     );
                   },
                   child: Container(

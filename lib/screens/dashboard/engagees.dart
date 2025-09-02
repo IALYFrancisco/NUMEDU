@@ -60,7 +60,8 @@ class EngageesPage extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const FormationDetailsPage()),
+                      MaterialPageRoute(
+                          builder: (_) => FormationDetailsPage(formationID: formationSnapshot.data!.id)),
                     );
                   },
                   child: Container(
