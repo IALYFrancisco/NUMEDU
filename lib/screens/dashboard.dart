@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'authentication/login.dart';
-import 'profile.dart';
+import 'profile/detailsprofile.dart';
 import 'dashboard/autres.dart';
 import 'dashboard/engagees.dart';
 import 'dashboard/encours.dart';
@@ -147,8 +147,12 @@ class _DashboardPageState extends State<DashboardPage>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ProfilePage()),
+                                  builder: (context) => ProfileView(
+                                    name: userName ?? 'Utilisateur',
+                                    email: user?.email ?? '',
+                                    profileImageUrl: user?.photoURL,
+                                  ),
+                                ),
                               );
                             },
                             child: Row(
